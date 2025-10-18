@@ -3,11 +3,27 @@ import { Construct } from 'constructs';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
+import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as path from 'path';
 
 export class UrutuBarberStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
+
+    // DynamoDB table
+    const barberTable = new dynamodb.Table(this, 'BarberTable', {
+      tableName: 'BarberTable',
+      partitionKey: {
+        name: 'pk',
+        type: dynamodb.AttributeType.STRING
+      },
+      sortKey: {
+        name: 'sk',
+        type: dynamodb.AttributeType.STRING
+      },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      removalPolicy: cdk.RemovalPolicy.DESTROY // For development only
+    });
 
     // Lambda function for getting services
     const getServicesLambda = new NodejsFunction(this, 'GetServicesLambda', {
@@ -20,9 +36,13 @@ export class UrutuBarberStack extends cdk.Stack {
         sourceMap: false
       },
       environment: {
-        NODE_ENV: 'production'
+        NODE_ENV: 'production',
+        BARBER_TABLE_NAME: barberTable.tableName
       }
     });
+
+    // Grant Lambda permissions to read from DynamoDB
+    barberTable.grantReadData(getServicesLambda);
 
     // API Gateway
     const api = new apigateway.RestApi(this, 'UrutuBarberApi', {

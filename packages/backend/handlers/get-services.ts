@@ -1,5 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import Service from '../models/Service';
+import ServiceRepository from '../repositories/ServiceRepository';
 
 export const handler = async (
   event: APIGatewayProxyEvent
@@ -23,36 +23,15 @@ export const handler = async (
       };
     }
 
-    // Mock data for services
-    const mockServices = [
-      {
-        id: '1',
-        name: 'Haircut',
-        description: 'Professional haircut service',
-        price: 25.00,
-        duration: 30,
-        createdAt: new Date('2024-01-01').toISOString(),
-        updatedAt: new Date('2024-01-01').toISOString()
-      },
-      {
-        id: '2',
-        name: 'Beard Trim',
-        description: 'Professional beard trimming and styling',
-        price: 15.00,
-        duration: 20,
-        createdAt: new Date('2024-01-01').toISOString(),
-        updatedAt: new Date('2024-01-01').toISOString()
-      },
-      {
-        id: '3',
-        name: 'Haircut + Beard',
-        description: 'Complete grooming service including haircut and beard trim',
-        price: 35.00,
-        duration: 45,
-        createdAt: new Date('2024-01-01').toISOString(),
-        updatedAt: new Date('2024-01-01').toISOString()
-      }
-    ];
+    // Get table name from environment variables
+    const tableName = process.env.BARBER_TABLE_NAME;
+    if (!tableName) {
+      throw new Error('BARBER_TABLE_NAME environment variable is not set');
+    }
+
+    // Initialize repository and fetch services
+    const serviceRepository = new ServiceRepository(tableName);
+    const services = await serviceRepository.getServicesByBusinessId(businessId);
 
     return {
       statusCode: 200,
@@ -64,7 +43,7 @@ export const handler = async (
       },
       body: JSON.stringify({
         businessId,
-        services: mockServices
+        services
       })
     };
 
