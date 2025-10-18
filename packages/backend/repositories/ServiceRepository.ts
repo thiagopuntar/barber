@@ -15,24 +15,26 @@ class ServiceRepository implements IServiceRepository {
 
     async getServicesByBusinessId(businessId: string): Promise<Service[]> {
         try {
-            const pk = `type#services#business#${businessId}#`;
-            
+            const pk = `type#business#${businessId}`;
+            console.debug('pk', pk);
+
             const command = new QueryCommand({
                 TableName: this.tableName,
-                KeyConditionExpression: 'begins_with(pk, :pk)',
+                KeyConditionExpression: 'pk = :pk AND begins_with(sk, :sk)',
                 ExpressionAttributeValues: {
-                    ':pk': pk
+                    ':pk': pk,
+                    ':sk': 'service#'
                 }
             });
 
             const result = await this.dynamoClient.send(command);
-            
+
             if (!result.Items) {
                 return [];
             }
 
             return result.Items.map(item => ({
-                id: item.sk as string,
+                id: item.sk.split('#')[1] as string,
                 name: item.name as string,
                 description: item.description as string,
                 price: item.price as number,
