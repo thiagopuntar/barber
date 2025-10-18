@@ -24,15 +24,15 @@ export const handler = async (
     }
 
     // Mock data for services
-    const mockServices: Service[] = [
+    const mockServices = [
       {
         id: '1',
         name: 'Haircut',
         description: 'Professional haircut service',
         price: 25.00,
         duration: 30,
-        createdAt: new Date('2024-01-01'),
-        updatedAt: new Date('2024-01-01')
+        createdAt: new Date('2024-01-01').toISOString(),
+        updatedAt: new Date('2024-01-01').toISOString()
       },
       {
         id: '2',
@@ -40,8 +40,8 @@ export const handler = async (
         description: 'Professional beard trimming and styling',
         price: 15.00,
         duration: 20,
-        createdAt: new Date('2024-01-01'),
-        updatedAt: new Date('2024-01-01')
+        createdAt: new Date('2024-01-01').toISOString(),
+        updatedAt: new Date('2024-01-01').toISOString()
       },
       {
         id: '3',
@@ -49,8 +49,8 @@ export const handler = async (
         description: 'Complete grooming service including haircut and beard trim',
         price: 35.00,
         duration: 45,
-        createdAt: new Date('2024-01-01'),
-        updatedAt: new Date('2024-01-01')
+        createdAt: new Date('2024-01-01').toISOString(),
+        updatedAt: new Date('2024-01-01').toISOString()
       }
     ];
 

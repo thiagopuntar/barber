@@ -1,6 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
 import * as path from 'path';
 
@@ -9,10 +10,15 @@ export class UrutuBarberStack extends cdk.Stack {
     super(scope, id, props);
 
     // Lambda function for getting services
-    const getServicesLambda = new lambda.Function(this, 'GetServicesLambda', {
+    const getServicesLambda = new NodejsFunction(this, 'GetServicesLambda', {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: 'get-services.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, '../handlers')),
+      entry: path.join(__dirname, '../handlers/get-services.ts'),
+      handler: 'handler',
+      bundling: {
+        forceDockerBundling: false,
+        minify: true,
+        sourceMap: false
+      },
       environment: {
         NODE_ENV: 'production'
       }
