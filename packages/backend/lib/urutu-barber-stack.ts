@@ -41,6 +41,22 @@ export class UrutuBarberStack extends cdk.Stack {
       }
     });
 
+
+    const getEmployeesLambda = new NodejsFunction(this, 'GetEmployeesLambda', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      entry: path.join(__dirname, '../handlers/get-services.ts'),
+      handler: 'handler',
+      bundling: {
+        forceDockerBundling: false,
+        minify: true,
+        sourceMap: false
+      },
+      environment: {
+        NODE_ENV: 'production',
+        BARBER_TABLE_NAME: barberTable.tableName
+      }
+    });
+
     // Grant Lambda permissions to read from DynamoDB
     barberTable.grantReadData(getServicesLambda);
 
@@ -56,11 +72,13 @@ export class UrutuBarberStack extends cdk.Stack {
     });
 
     // Services resource with businessId parameter
-    const servicesResource = api.root.addResource('services');
-    const businessIdResource = servicesResource.addResource('{businessId}');
+    const businessIdResource = api.root.addResource('{businessId}');
+    const servicesResource = businessIdResource.addResource('services');
+    const employeesResource = businessIdResource.addResource('employees');
     
     // GET /services/{businessId} endpoint
-    businessIdResource.addMethod('GET', new apigateway.LambdaIntegration(getServicesLambda));
+    servicesResource.addMethod('GET', new apigateway.LambdaIntegration(getServicesLambda));
+    employeesResource.addMethod('GET', new apigateway.LambdaIntegration(getEmployeesLambda));
 
     // Output the API Gateway URL
     new cdk.CfnOutput(this, 'ApiGatewayUrl', {
