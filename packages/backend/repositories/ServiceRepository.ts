@@ -15,15 +15,14 @@ class ServiceRepository implements IServiceRepository {
 
     async getServicesByBusinessId(businessId: string): Promise<Service[]> {
         try {
-            const pk = `type#business#${businessId}`;
+            const pk = `business#${businessId}#type#service`;
             console.debug('pk', pk);
 
             const command = new QueryCommand({
                 TableName: this.tableName,
-                KeyConditionExpression: 'pk = :pk AND begins_with(sk, :sk)',
+                KeyConditionExpression: 'pk = :pk',
                 ExpressionAttributeValues: {
                     ':pk': pk,
-                    ':sk': 'service#'
                 }
             });
 
