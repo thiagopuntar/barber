@@ -1,10 +1,9 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import * as lambda from 'aws-cdk-lib/aws-lambda';
-import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
-import * as path from 'path';
+import { ServicesConstruct } from './services-construct';
+import { EmployeesConstruct } from './employees-construct';
 
 export class UrutuBarberStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -25,41 +24,6 @@ export class UrutuBarberStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY // For development only
     });
 
-    // Lambda function for getting services
-    const getServicesLambda = new NodejsFunction(this, 'GetServicesLambda', {
-      runtime: lambda.Runtime.NODEJS_22_X,
-      entry: path.join(__dirname, '../handlers/get-services.ts'),
-      handler: 'handler',
-      bundling: {
-        forceDockerBundling: false,
-        minify: true,
-        sourceMap: false
-      },
-      environment: {
-        NODE_ENV: 'production',
-        BARBER_TABLE_NAME: barberTable.tableName
-      }
-    });
-
-
-    const getEmployeesLambda = new NodejsFunction(this, 'GetEmployeesLambda', {
-      runtime: lambda.Runtime.NODEJS_22_X,
-      entry: path.join(__dirname, '../handlers/get-services.ts'),
-      handler: 'handler',
-      bundling: {
-        forceDockerBundling: false,
-        minify: true,
-        sourceMap: false
-      },
-      environment: {
-        NODE_ENV: 'production',
-        BARBER_TABLE_NAME: barberTable.tableName
-      }
-    });
-
-    // Grant Lambda permissions to read from DynamoDB
-    barberTable.grantReadData(getServicesLambda);
-
     // API Gateway
     const api = new apigateway.RestApi(this, 'UrutuBarberApi', {
       restApiName: 'Urutu Barber API',
@@ -71,14 +35,19 @@ export class UrutuBarberStack extends cdk.Stack {
       }
     });
 
-    // Services resource with businessId parameter
+    // Business ID resource (shared between constructs)
     const businessIdResource = api.root.addResource('{businessId}');
-    const servicesResource = businessIdResource.addResource('services');
-    const employeesResource = businessIdResource.addResource('employees');
-    
-    // GET /services/{businessId} endpoint
-    servicesResource.addMethod('GET', new apigateway.LambdaIntegration(getServicesLambda));
-    employeesResource.addMethod('GET', new apigateway.LambdaIntegration(getEmployeesLambda));
+
+    // Instantiate endpoint constructs
+    new ServicesConstruct(this, 'ServicesConstruct', {
+      table: barberTable,
+      businessIdResource: businessIdResource
+    });
+
+    new EmployeesConstruct(this, 'EmployeesConstruct', {
+      table: barberTable,
+      businessIdResource: businessIdResource
+    });
 
     // Output the API Gateway URL
     new cdk.CfnOutput(this, 'ApiGatewayUrl', {

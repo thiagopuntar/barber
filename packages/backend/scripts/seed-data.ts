@@ -2,8 +2,6 @@
 
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
-import { v4 as uuidv4 } from 'uuid';
-import { faker } from '@faker-js/faker';
 
 interface ServiceData {
   pk: string;
@@ -26,7 +24,10 @@ interface EmployeeData {
 
 // Mock data generators using faker
 
-function generateService(businessId: string, index: number): ServiceData {
+async function generateService(businessId: string, index: number): Promise<ServiceData> {
+  const { v4: uuidv4 } = await import('uuid');
+  const { faker } = await import('@faker-js/faker');
+
   const now = new Date().toISOString();
   const serviceId = uuidv4();
 
@@ -46,7 +47,10 @@ function generateService(businessId: string, index: number): ServiceData {
   };
 }
 
-function generateEmployee(businessId: string, index: number): EmployeeData {
+async function generateEmployee(businessId: string, index: number): Promise<EmployeeData> {
+  const { v4: uuidv4 } = await import('uuid');
+  const { faker } = await import('@faker-js/faker');
+
   const now = new Date().toISOString();
   const employeeId = uuidv4();
 
@@ -75,14 +79,16 @@ async function seedData(businessId: string, numServices: number, numEmployees: n
   console.log(`Services to create: ${numServices}`);
   console.log(`Employees to create: ${numEmployees}`);
 
-  const client = new DynamoDBClient({});
+  const client = new DynamoDBClient({
+    region: 'us-east-1'
+  });
   const dynamoClient = DynamoDBDocumentClient.from(client);
 
   try {
     // Seed services
     console.log('\nSeeding services...');
     for (let i = 0; i < numServices; i++) {
-      const service = generateService(businessId, i);
+      const service = await generateService(businessId, i);
       const command = new PutCommand({
         TableName: tableName,
         Item: service
@@ -95,7 +101,7 @@ async function seedData(businessId: string, numServices: number, numEmployees: n
     // Seed employees
     console.log('\nSeeding employees...');
     for (let i = 0; i < numEmployees; i++) {
-      const employee = generateEmployee(businessId, i);
+      const employee = await generateEmployee(businessId, i);
       const command = new PutCommand({
         TableName: tableName,
         Item: employee
