@@ -44,7 +44,6 @@ export class AvailabilityConstruct extends Construct {
       .addResource("services")
       .addResource("{serviceId}")
       .addResource("employees")
-      .addResource("employees")
       .addResource("{employeeId}");
 
     // GET /employees/{businessId} endpoint
