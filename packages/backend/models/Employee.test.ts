@@ -299,6 +299,187 @@ describe("Employee", () => {
                 { start: "15:00", end: "17:00" }
             ]);
         });
+
+        it("should exclude slots that conflict with existing appointments", () => {
+            // Arrange
+            const date = new Date(2024, 0, 15); // Monday - using local timezone
+            const duration = 60;
+
+            // Add an appointment that conflicts with the 10:00-11:00 slot
+            const appointment = new Appointment();
+            appointment.id = "appt-conflict";
+            appointment.date = new Date(2024, 0, 15); // Same Monday
+            appointment.initialTime = "10:00";
+            appointment.finalTime = "11:00";
+            appointment.createdAt = new Date();
+            appointment.updatedAt = new Date();
+
+            employee.addAppointments([appointment]);
+
+            // Act
+            const result = employee.getSlotPerDay(date, duration);
+
+            // Assert
+            expect(result).toHaveLength(1);
+            expect(result[0].date).toEqual(date);
+            // The 10:00-11:00 slot should be excluded
+            expect(result[0].slots).toEqual([
+                { start: "09:00", end: "10:00" },
+                { start: "11:00", end: "12:00" },
+                { start: "13:00", end: "14:00" },
+                { start: "14:00", end: "15:00" },
+                { start: "15:00", end: "16:00" },
+                { start: "16:00", end: "17:00" }
+            ]);
+        });
+
+        it("should exclude multiple slots that conflict with multiple appointments", () => {
+            // Arrange
+            const date = new Date(2024, 0, 15); // Monday - using local timezone
+            const duration = 60;
+
+            // Add multiple appointments
+            const appointment1 = new Appointment();
+            appointment1.id = "appt-1";
+            appointment1.date = new Date(2024, 0, 15);
+            appointment1.initialTime = "10:00";
+            appointment1.finalTime = "11:00";
+            appointment1.createdAt = new Date();
+            appointment1.updatedAt = new Date();
+
+            const appointment2 = new Appointment();
+            appointment2.id = "appt-2";
+            appointment2.date = new Date(2024, 0, 15);
+            appointment2.initialTime = "14:00";
+            appointment2.finalTime = "15:00";
+            appointment2.createdAt = new Date();
+            appointment2.updatedAt = new Date();
+
+            employee.addAppointments([appointment1, appointment2]);
+
+            // Act
+            const result = employee.getSlotPerDay(date, duration);
+
+            // Assert
+            expect(result).toHaveLength(1);
+            expect(result[0].slots).toEqual([
+                { start: "09:00", end: "10:00" },
+                { start: "11:00", end: "12:00" },
+                { start: "13:00", end: "14:00" },
+                { start: "15:00", end: "16:00" },
+                { start: "16:00", end: "17:00" }
+            ]);
+        });
+
+        it("should not exclude slots when appointments are on different days", () => {
+            // Arrange
+            const date = new Date(2024, 0, 15); // Monday
+            const duration = 60;
+
+            // Add appointment on a different day
+            const appointment = new Appointment();
+            appointment.id = "appt-different-day";
+            appointment.date = new Date(2024, 0, 16); // Tuesday
+            appointment.initialTime = "10:00";
+            appointment.finalTime = "11:00";
+            appointment.createdAt = new Date();
+            appointment.updatedAt = new Date();
+
+            employee.addAppointments([appointment]);
+
+            // Act
+            const result = employee.getSlotPerDay(date, duration);
+
+            // Assert
+            expect(result).toHaveLength(1);
+            // All slots should be available since appointment is on a different day
+            expect(result[0].slots).toEqual([
+                { start: "09:00", end: "10:00" },
+                { start: "10:00", end: "11:00" },
+                { start: "11:00", end: "12:00" },
+                { start: "13:00", end: "14:00" },
+                { start: "14:00", end: "15:00" },
+                { start: "15:00", end: "16:00" },
+                { start: "16:00", end: "17:00" }
+            ]);
+        });
+
+        it("should exclude slots that partially overlap with appointments", () => {
+            // Arrange
+            const date = new Date(2024, 0, 15); // Monday
+            const duration = 60;
+
+            // Add appointment that overlaps with 09:30-10:30 (overlaps with multiple slots)
+            const appointment = new Appointment();
+            appointment.id = "appt-partial";
+            appointment.date = new Date(2024, 0, 15);
+            appointment.initialTime = "09:30";
+            appointment.finalTime = "10:30";
+            appointment.createdAt = new Date();
+            appointment.updatedAt = new Date();
+
+            employee.addAppointments([appointment]);
+
+            // Act
+            const result = employee.getSlotPerDay(date, duration);
+
+            // Assert
+            expect(result).toHaveLength(1);
+            // Both 09:00-10:00 and 10:00-11:00 should be excluded because they overlap
+            expect(result[0].slots).toEqual([
+                { start: "11:00", end: "12:00" },
+                { start: "13:00", end: "14:00" },
+                { start: "14:00", end: "15:00" },
+                { start: "15:00", end: "16:00" },
+                { start: "16:00", end: "17:00" }
+            ]);
+        });
+
+        it("should return all slots when no appointments exist", () => {
+            // Arrange
+            const date = new Date(2024, 0, 15); // Monday
+            const duration = 60;
+            // No appointments added
+
+            // Act
+            const result = employee.getSlotPerDay(date, duration);
+
+            // Assert
+            expect(result).toHaveLength(1);
+            expect(result[0].slots).toEqual([
+                { start: "09:00", end: "10:00" },
+                { start: "10:00", end: "11:00" },
+                { start: "11:00", end: "12:00" },
+                { start: "13:00", end: "14:00" },
+                { start: "14:00", end: "15:00" },
+                { start: "15:00", end: "16:00" },
+                { start: "16:00", end: "17:00" }
+            ]);
+        });
+
+        it("should handle edge case where appointment spans entire availability range", () => {
+            // Arrange
+            const date = new Date(2024, 0, 17); // Wednesday
+            const duration = 60;
+
+            // Add appointment that covers entire Wednesday availability (10:00-16:00)
+            const appointment = new Appointment();
+            appointment.id = "appt-full-day";
+            appointment.date = new Date(2024, 0, 17);
+            appointment.initialTime = "10:00";
+            appointment.finalTime = "16:00";
+            appointment.createdAt = new Date();
+            appointment.updatedAt = new Date();
+
+            employee.addAppointments([appointment]);
+
+            // Act
+            const result = employee.getSlotPerDay(date, duration);
+
+            // Assert
+            expect(result).toHaveLength(1);
+            expect(result[0].slots).toEqual([]); // No slots should be available
+        });
     });
 
 });
