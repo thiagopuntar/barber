@@ -33,6 +33,7 @@ npm run seed salon456 10 5
 ### Environment Variables
 
 The script uses the following environment variable:
+
 - `BARBER_TABLE_NAME`: DynamoDB table name (defaults to "BarberTable")
 
 Make sure you have AWS credentials configured and the DynamoDB table deployed before running the script.
@@ -40,6 +41,7 @@ Make sure you have AWS credentials configured and the DynamoDB table deployed be
 ### Data Structure
 
 #### Services
+
 - **pk**: `business#{businessId}#type#service`
 - **sk**: UUID for the service
 - **name**: Random service name from predefined list
@@ -50,6 +52,7 @@ Make sure you have AWS credentials configured and the DynamoDB table deployed be
 - **updatedAt**: ISO timestamp
 
 #### Employees
+
 - **pk**: `business#{businessId}#type#employee`
 - **sk**: UUID for the employee
 - **name**: Random employee name from predefined list

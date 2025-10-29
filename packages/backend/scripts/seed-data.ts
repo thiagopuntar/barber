@@ -18,6 +18,13 @@ interface EmployeeData {
   pk: string;
   sk: string;
   name: string;
+  availability: Array<{
+    weekDay: number;
+    range: Array<{
+      start: string;
+      end: string;
+    }>;
+  }>;
   createdAt: string;
   updatedAt: string;
 }
@@ -25,14 +32,30 @@ interface EmployeeData {
 // Mock data generators using faker
 
 async function generateService(businessId: string, index: number): Promise<ServiceData> {
-  const { v4: uuidv4 } = await import('uuid');
-  const { faker } = await import('@faker-js/faker');
+  const { v4: uuidv4 } = await import("uuid");
+  const { faker } = await import("@faker-js/faker");
 
   const now = new Date().toISOString();
   const serviceId = uuidv4();
 
   // Generate random barber/beauty service names using faker
-  const serviceTypes = ['Haircut', 'Beard Trim', 'Hair Coloring', 'Hair Wash', 'Facial', 'Head Massage', 'Eyebrow Shaping', 'Hair Treatment', 'Styling', 'Shaving', 'Manicure', 'Pedicure', 'Hair Extension', 'Perm', 'Deep Conditioning'];
+  const serviceTypes = [
+    "Haircut",
+    "Beard Trim",
+    "Hair Coloring",
+    "Hair Wash",
+    "Facial",
+    "Head Massage",
+    "Eyebrow Shaping",
+    "Hair Treatment",
+    "Styling",
+    "Shaving",
+    "Manicure",
+    "Pedicure",
+    "Hair Extension",
+    "Perm",
+    "Deep Conditioning",
+  ];
   const serviceName = faker.helpers.arrayElement(serviceTypes);
 
   return {
@@ -43,13 +66,13 @@ async function generateService(businessId: string, index: number): Promise<Servi
     price: faker.number.int({ min: 20, max: 150 }), // Random price between 20-150
     duration: faker.number.int({ min: 30, max: 120 }), // Random duration between 30-120 minutes
     createdAt: now,
-    updatedAt: now
+    updatedAt: now,
   };
 }
 
 async function generateEmployee(businessId: string, index: number): Promise<EmployeeData> {
-  const { v4: uuidv4 } = await import('uuid');
-  const { faker } = await import('@faker-js/faker');
+  const { v4: uuidv4 } = await import("uuid");
+  const { faker } = await import("@faker-js/faker");
 
   const now = new Date().toISOString();
   const employeeId = uuidv4();
@@ -58,21 +81,51 @@ async function generateEmployee(businessId: string, index: number): Promise<Empl
     pk: `business#${businessId}#type#employee`,
     sk: employeeId,
     name: faker.person.fullName(), // Random full name using faker
+    availability: [
+      {
+        weekDay: 0,
+        range: [{ start: "09:00", end: "17:00" }],
+      },
+      {
+        weekDay: 1,
+        range: [{ start: "09:00", end: "17:00" }],
+      },
+      {
+        weekDay: 2,
+        range: [{ start: "09:00", end: "17:00" }],
+      },
+      {
+        weekDay: 3,
+        range: [{ start: "09:00", end: "17:00" }],
+      },
+      {
+        weekDay: 4,
+        range: [{ start: "09:00", end: "17:00" }],
+      },
+      {
+        weekDay: 5,
+        range: [{ start: "09:00", end: "17:00" }],
+      },
+      {
+        weekDay: 6,
+        range: [{ start: "09:00", end: "17:00" }],
+      },
+    ],
     createdAt: now,
-    updatedAt: now
+    updatedAt: now,
   };
 }
 
 async function seedData(businessId: string, numServices: number, numEmployees: number) {
   if (!businessId) {
-    throw new Error('Business ID is required');
+    throw new Error("Business ID is required");
   }
 
   if (numServices < 0 || numEmployees < 0) {
-    throw new Error('Number of services and employees must be non-negative');
+    throw new Error("Number of services and employees must be non-negative");
   }
 
-  const tableName = process.env.BARBER_TABLE_NAME || 'BarberTable';
+  const tableName = process.env.BARBER_TABLE_NAME || "BarberTable";
 
   console.log(`Seeding data for business: ${businessId}`);
   console.log(`Table: ${tableName}`);
@@ -80,18 +133,18 @@ async function seedData(businessId: string, numServices: number, numEmployees: n
   console.log(`Employees to create: ${numEmployees}`);
 
   const client = new DynamoDBClient({
-    region: 'us-east-1'
+    region: "us-east-1",
   });
   const dynamoClient = DynamoDBDocumentClient.from(client);
 
   try {
     // Seed services
-    console.log('\nSeeding services...');
+    console.log("\nSeeding services...");
     for (let i = 0; i < numServices; i++) {
       const service = await generateService(businessId, i);
       const command = new PutCommand({
         TableName: tableName,
-        Item: service
+        Item: service,
       });
 
       await dynamoClient.send(command);
@@ -99,23 +152,24 @@ async function seedData(businessId: string, numServices: number, numEmployees: n
     }
 
     // Seed employees
-    console.log('\nSeeding employees...');
+    console.log("\nSeeding employees...");
     for (let i = 0; i < numEmployees; i++) {
       const employee = await generateEmployee(businessId, i);
       const command = new PutCommand({
         TableName: tableName,
-        Item: employee
+        Item: employee,
       });
 
       await dynamoClient.send(command);
       console.log(`✓ Created employee: ${employee.name} (ID: ${employee.sk})`);
     }
 
-    console.log('\n✅ Seeding completed successfully!');
-    console.log(`Created ${numServices} services and ${numEmployees} employees for business ${businessId}`);
-
+    console.log("\n✅ Seeding completed successfully!");
+    console.log(
+      `Created ${numServices} services and ${numEmployees} employees for business ${businessId}`
+    );
   } catch (error) {
-    console.error('❌ Error seeding data:', error);
+    console.error("❌ Error seeding data:", error);
     throw error;
   }
 }
@@ -125,8 +179,8 @@ function parseArgs() {
   const args = process.argv.slice(2);
 
   if (args.length < 3) {
-    console.error('Usage: ts-node seed-data.ts <businessId> <numServices> <numEmployees>');
-    console.error('Example: ts-node seed-data.ts business123 5 3');
+    console.error("Usage: ts-node seed-data.ts <businessId> <numServices> <numEmployees>");
+    console.error("Example: ts-node seed-data.ts business123 5 3");
     process.exit(1);
   }
 
@@ -135,7 +189,7 @@ function parseArgs() {
   const numEmployees = parseInt(args[2], 10);
 
   if (isNaN(numServices) || isNaN(numEmployees)) {
-    console.error('numServices and numEmployees must be valid numbers');
+    console.error("numServices and numEmployees must be valid numbers");
     process.exit(1);
   }
 
@@ -148,7 +202,7 @@ async function main() {
     const { businessId, numServices, numEmployees } = parseArgs();
     await seedData(businessId, numServices, numEmployees);
   } catch (error) {
-    console.error('Failed to seed data:', error);
+    console.error("Failed to seed data:", error);
     process.exit(1);
   }
 }

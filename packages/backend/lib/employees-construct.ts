@@ -1,9 +1,9 @@
-import { Construct } from 'constructs';
-import * as lambda from 'aws-cdk-lib/aws-lambda';
-import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
-import * as apigateway from 'aws-cdk-lib/aws-apigateway';
-import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
-import * as path from 'path';
+import { Construct } from "constructs";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
+import * as apigateway from "aws-cdk-lib/aws-apigateway";
+import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
+import * as path from "path";
 
 interface EmployeesConstructProps {
   table: dynamodb.Table;
@@ -16,28 +16,28 @@ export class EmployeesConstruct extends Construct {
 
     const { table, businessIdResource } = props;
 
-    const getEmployeesLambda = new NodejsFunction(this, 'GetEmployeesLambda', {
+    const getEmployeesLambda = new NodejsFunction(this, "GetEmployeesLambda", {
       runtime: lambda.Runtime.NODEJS_22_X,
-      entry: path.join(__dirname, '../handlers/get-employees.ts'),
-      handler: 'handler',
+      entry: path.join(__dirname, "../handlers/get-employees.ts"),
+      handler: "handler",
       bundling: {
         forceDockerBundling: false,
         minify: true,
-        sourceMap: false
+        sourceMap: false,
       },
       environment: {
-        NODE_ENV: 'production',
-        BARBER_TABLE_NAME: table.tableName
-      }
+        NODE_ENV: "production",
+        BARBER_TABLE_NAME: table.tableName,
+      },
     });
 
     // Grant Lambda permissions to read from DynamoDB
     table.grantReadData(getEmployeesLambda);
 
     // Employees resource
-    const employeesResource = businessIdResource.addResource('employees');
+    const employeesResource = businessIdResource.addResource("employees");
 
     // GET /employees/{businessId} endpoint
-    employeesResource.addMethod('GET', new apigateway.LambdaIntegration(getEmployeesLambda));
+    employeesResource.addMethod("GET", new apigateway.LambdaIntegration(getEmployeesLambda));
   }
 }
