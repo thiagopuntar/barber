@@ -69,20 +69,19 @@ describe("EmployeeRepository", () => {
             const queryCommand = mockedQueryCommand.mock.instances[0];
             expect(queryCommand).toBeDefined();
 
-            const expectedEmployees: Employee[] = [
-                {
-                    id: "emp-1",
-                    name: "John Doe",
-                    createdAt: new Date("2023-01-01T00:00:00Z"),
-                    updatedAt: new Date("2023-01-02T00:00:00Z")
-                },
-                {
-                    id: "emp-2",
-                    name: "Jane Smith",
-                    createdAt: new Date("2023-01-03T00:00:00Z"),
-                    updatedAt: new Date("2023-01-04T00:00:00Z")
-                }
-            ];
+            const expectedEmployee1 = new Employee();
+            expectedEmployee1.id = "emp-1";
+            expectedEmployee1.name = "John Doe";
+            expectedEmployee1.createdAt = new Date("2023-01-01T00:00:00Z");
+            expectedEmployee1.updatedAt = new Date("2023-01-02T00:00:00Z");
+
+            const expectedEmployee2 = new Employee();
+            expectedEmployee2.id = "emp-2";
+            expectedEmployee2.name = "Jane Smith";
+            expectedEmployee2.createdAt = new Date("2023-01-03T00:00:00Z");
+            expectedEmployee2.updatedAt = new Date("2023-01-04T00:00:00Z");
+
+            const expectedEmployees: Employee[] = [expectedEmployee1, expectedEmployee2];
 
             expect(result).toEqual(expectedEmployees);
         });
