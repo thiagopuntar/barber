@@ -1,6 +1,6 @@
 import Appointment from "./Appointment";
 
-type Availability = {
+export type Availability = {
   weekDay: number;
   range: Array<{
     start: string;

@@ -1,5 +1,5 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import Employee from "../models/Employee";
+import Employee, { Availability } from "../models/Employee";
 import { DynamoDBDocumentClient, GetCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { IEmployeeRepository } from "./IEmployeeRepository";
 
@@ -37,6 +37,7 @@ export class EmployeeRepository implements IEmployeeRepository {
         employee.name = item.name as string;
         employee.createdAt = new Date(item.createdAt as string);
         employee.updatedAt = new Date(item.updatedAt as string);
+        employee.availability = item.availability as Availability[];
         return employee;
       });
     } catch (error) {
