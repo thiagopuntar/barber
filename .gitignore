@@ -9,3 +9,4 @@ cdk.out
 
 # TypeScript build output
 dist/
+.agent/
