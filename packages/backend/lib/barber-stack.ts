@@ -2,6 +2,9 @@ import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
+import * as path from "path";
 import { ServicesConstruct } from "./services-construct";
 import { EmployeesConstruct } from "./employees-construct";
 import { AvailabilityConstruct } from "./availability-construct";
@@ -26,15 +29,38 @@ export class BarberStack extends cdk.Stack {
     });
 
     // API Gateway
-    const api = new apigateway.RestApi(this, "UrutuBarberApi", {
-      restApiName: "Urutu Barber API",
-      description: "API for Urutu Barber services",
+    const api = new apigateway.RestApi(this, "BarberApi", {
+      restApiName: "Barber API",
+      description: "API for Barber services",
       defaultCorsPreflightOptions: {
         allowOrigins: apigateway.Cors.ALL_ORIGINS,
         allowMethods: apigateway.Cors.ALL_METHODS,
         allowHeaders: ["Content-Type", "Authorization"],
       },
     });
+
+    // Documentation Lambda
+    const getDocsLambda = new NodejsFunction(this, "GetDocsLambda", {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      entry: path.join(__dirname, "../handlers/get-docs.ts"),
+      handler: "handler",
+      bundling: {
+        commandHooks: {
+          beforeBundling(): string[] { return []; },
+          beforeInstall(): string[] { return []; },
+          afterBundling(inputDir: string, outputDir: string): string[] {
+            return [
+              `mkdir -p ${outputDir}/docs`,
+              `cp ${inputDir}/handlers/docs/openapi.json ${outputDir}/docs/openapi.json`
+            ];
+          },
+        },
+      },
+    });
+
+    // Documentation endpoints
+    api.root.addResource("docs").addMethod("GET", new apigateway.LambdaIntegration(getDocsLambda));
+    api.root.addResource("openapi.json").addMethod("GET", new apigateway.LambdaIntegration(getDocsLambda));
 
     // Generic Error Model
     const errorModel = api.addModel("ErrorModel", {
