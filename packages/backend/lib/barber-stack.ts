@@ -4,8 +4,9 @@ import * as apigateway from "aws-cdk-lib/aws-apigateway";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import { ServicesConstruct } from "./services-construct";
 import { EmployeesConstruct } from "./employees-construct";
+import { AvailabilityConstruct } from "./availability-construct";
 
-export class UrutuBarberStack extends cdk.Stack {
+export class BarberStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
@@ -35,6 +36,21 @@ export class UrutuBarberStack extends cdk.Stack {
       },
     });
 
+    // Generic Error Model
+    const errorModel = api.addModel("ErrorModel", {
+      contentType: "application/json",
+      modelName: "ErrorResponse",
+      schema: {
+        schema: apigateway.JsonSchemaVersion.DRAFT4,
+        title: "ErrorResponse",
+        type: apigateway.JsonSchemaType.OBJECT,
+        properties: {
+          error: { type: apigateway.JsonSchemaType.STRING },
+        },
+        required: ["error"],
+      },
+    });
+
     // Business ID resource (shared between constructs)
     const businessIdResource = api.root.addResource("{businessId}");
 
@@ -42,11 +58,22 @@ export class UrutuBarberStack extends cdk.Stack {
     new ServicesConstruct(this, "ServicesConstruct", {
       table: barberTable,
       businessIdResource: businessIdResource,
+      api,
+      errorModel: errorModel,
     });
 
     new EmployeesConstruct(this, "EmployeesConstruct", {
       table: barberTable,
       businessIdResource: businessIdResource,
+      api,
+      errorModel: errorModel,
+    });
+
+    new AvailabilityConstruct(this, "AvailabilityConstruct", {
+      table: barberTable,
+      businessIdResource: businessIdResource,
+      api,
+      errorModel: errorModel,
     });
 
     // Output the API Gateway URL
