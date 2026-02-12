@@ -8,6 +8,7 @@ import * as path from "path";
 import { ServicesConstruct } from "./services-construct";
 import { EmployeesConstruct } from "./employees-construct";
 import { AvailabilityConstruct } from "./availability-construct";
+import { AuthConstruct } from "./auth-construct";
 
 export class BarberStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -79,6 +80,9 @@ export class BarberStack extends cdk.Stack {
 
     // Business ID resource (shared between constructs)
     const businessIdResource = api.root.addResource("{businessId}");
+
+    // Auth Construct
+    new AuthConstruct(this, "AuthConstruct");
 
     // Instantiate endpoint constructs
     new ServicesConstruct(this, "ServicesConstruct", {
