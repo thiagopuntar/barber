@@ -12,8 +12,8 @@ export function PublicHeader() {
         return null;
     }
 
-    // Não exibe o header no Dashboard
-    if (pathname.startsWith("/dashboard")) {
+    // Não exibe o header nas páginas de Booking (elas têm header próprio)
+    if (pathname.startsWith("/booking")) {
         return null;
     }
 

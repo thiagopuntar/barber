@@ -6,28 +6,21 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Scissors, Calendar as CalendarIcon, User, CheckCircle2, ChevronRight, ChevronLeft, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { COMPANIES } from "@/lib/mock-data";
+import { notFound, useParams } from "next/navigation";
 
-// Mock Data: Dados fictícios para demonstração
-const services = [
 
-    { id: 1, name: "Corte de Cabelo", price: "R$ 50,00", duration: "30 min", icon: Scissors },
-    { id: 2, name: "Barba", price: "R$ 35,00", duration: "20 min", icon: User },
-    { id: 3, name: "Combo Completo", price: "R$ 80,00", duration: "50 min", icon: CheckCircle2 },
-];
 
-const professionals = [
-    { id: 1, name: "Barbeiro João", role: "Master Barber", image: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=400&h=400&fit=crop" },
-    { id: 2, name: "Barbeiro Marcos", role: "Especialista", image: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop" },
-    { id: 3, name: "Barbeiro Lucas", role: "Junior Barber", image: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=400&h=400&fit=crop" },
-];
-
-const timeSlots = [
-    "09:00", "09:30", "10:00", "10:30", "11:00", "14:00", "14:30", "15:00", "15:30", "16:00"
-];
-
-// Página de Agendamento (Fluxo do Cliente)
-// Implementa um wizard de 4 passos: Serviço -> Profissional -> Data -> Confirmação
 export default function BookingPage() {
+    const params = useParams();
+    const slug = params.slug as string;
+    const company = COMPANIES[slug];
+
+    if (!company) {
+        return notFound();
+    }
+
+    const { services, professionals, timeSlots } = company;
 
     const [step, setStep] = useState(1); // Controla o passo atual do wizard
 
@@ -47,9 +40,24 @@ export default function BookingPage() {
             <div className="fixed inset-0 z-0 pointer-events-none bg-noise opacity-[0.03] mix-blend-overlay" />
 
             {/* Header Simples */}
+            <header className="relative w-full p-6 flex flex-col items-center justify-center z-20 text-center gap-4">
+                <div className="absolute top-6 right-6">
+                    <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-white uppercase tracking-wider text-xs font-bold" onClick={() => window.location.href = "/login"}>
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Sair
+                    </Button>
+                </div>
 
-
-            <main className="relative z-10 container mx-auto px-4 pt-10 pb-10 max-w-3xl">
+                <div className="relative h-16 w-16 rounded-full overflow-hidden border-2 border-zinc-800 shadow-xl">
+                    <Image
+                        src={company.image}
+                        alt={company.name}
+                        fill
+                        className="object-cover"
+                    />
+                </div>
+                <h1 className="font-bold text-xl tracking-[0.2em] uppercase text-white">{company.name}</h1>
+            </header>            <main className="relative z-10 container mx-auto px-4 pt-10 pb-10 max-w-3xl">
                 {/* Progress Bar */}
                 <div className="mb-8">
                     <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-zinc-300 mb-2">
@@ -257,6 +265,21 @@ export default function BookingPage() {
                         </Button>
                     )}
                 </div>
+                {/* Google Maps Widget e Endereço */}
+                {company.mapUrl && (
+                    <div className="w-full h-48 mt-12 rounded-sm overflow-hidden border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm grayscale hover:grayscale-0 transition-all duration-500">
+                        <iframe
+                            src={company.mapUrl}
+                            width="100%"
+                            height="100%"
+                            style={{ border: 0 }}
+                            allowFullScreen
+                            loading="lazy"
+                            referrerPolicy="no-referrer-when-downgrade"
+                            title={`Mapa de ${company.name}`}
+                        />
+                    </div>
+                )}
             </main>
         </div>
     );
