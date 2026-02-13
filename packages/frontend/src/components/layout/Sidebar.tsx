@@ -43,7 +43,7 @@ export function Sidebar() {
                     size="icon"
                     onClick={() => setIsOpen(!isOpen)}
                     aria-label="Toggle menu"
-                    className="text-zinc-400 hover:bg-zinc-900 hover:text-white"
+                    className="text-zinc-300 hover:bg-zinc-900 hover:text-white"
                 >
                     {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
                 </Button>
@@ -60,7 +60,7 @@ export function Sidebar() {
             {/* Sidebar Container */}
             <aside
                 className={cn(
-                    "fixed inset-y-0 left-0 z-40 w-64 transform bg-zinc-950 shadow-2xl transition-transform duration-300 ease-in-out md:translate-x-0 md:shadow-none border-r border-zinc-800",
+                    "fixed inset-y-0 left-0 z-40 w-64 transform bg-zinc-950 shadow-2xl transition-transform duration-300 ease-in-out md:translate-x-0 md:shadow-none border-r border-zinc-800 md:sticky md:top-0 md:h-screen",
                     isOpen ? "translate-x-0" : "-translate-x-full"
                 )}
             >
@@ -94,7 +94,7 @@ export function Sidebar() {
                                     "group flex items-center rounded-sm px-3 py-2.5 text-xs font-bold uppercase tracking-wider transition-all duration-200",
                                     isActive
                                         ? "bg-blue-600/10 text-blue-500 border-r-2 border-blue-500"
-                                        : "text-zinc-500 hover:bg-zinc-900 hover:text-zinc-300 border-r-2 border-transparent"
+                                        : "text-zinc-300 hover:bg-zinc-900 hover:text-zinc-300 border-r-2 border-transparent"
                                 )}
                             >
                                 <item.icon
@@ -102,7 +102,7 @@ export function Sidebar() {
                                         "mr-3 h-4 w-4 flex-shrink-0 transition-colors",
                                         isActive
                                             ? "text-blue-500"
-                                            : "text-zinc-600 group-hover:text-zinc-400"
+                                            : "text-zinc-300 group-hover:text-zinc-300"
                                     )}
                                 />
                                 {item.name}

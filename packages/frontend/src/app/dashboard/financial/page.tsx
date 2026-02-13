@@ -13,11 +13,11 @@ export default function FinancialPage() {
                     <h2 className="text-3xl font-bold uppercase tracking-widest text-white">
                         Financeiro
                     </h2>
-                    <p className="text-zinc-500 text-xs uppercase tracking-wider mt-1">
+                    <p className="text-zinc-300 text-xs uppercase tracking-wider mt-1">
                         Acompanhe o fluxo de caixa da sua barbearia.
                     </p>
                 </div>
-                <Button variant="outline" className="bg-transparent text-zinc-400 border-zinc-700 hover:bg-zinc-900 hover:text-white uppercase tracking-wider h-10 px-6 rounded-sm text-xs font-bold">
+                <Button variant="outline" className="bg-transparent text-zinc-300 border-zinc-700 hover:bg-zinc-900 hover:text-white uppercase tracking-wider h-10 px-6 rounded-sm text-xs font-bold">
                     <Download className="mr-2 h-4 w-4" />
                     Exportar Relatório
                 </Button>
@@ -28,7 +28,7 @@ export default function FinancialPage() {
 
                 <Card className="bg-zinc-900/50 border-zinc-800 backdrop-blur-sm">
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium uppercase tracking-wider text-zinc-400">Receita Total</CardTitle>
+                        <CardTitle className="text-sm font-medium uppercase tracking-wider text-zinc-300">Receita Total</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="text-3xl font-bold text-white tracking-tight flex items-center gap-2">
@@ -38,12 +38,12 @@ export default function FinancialPage() {
                                 +12%
                             </span>
                         </div>
-                        <p className="text-[10px] uppercase tracking-widest text-zinc-600 mt-2">Mês Atual</p>
+                        <p className="text-[10px] uppercase tracking-widest text-zinc-300 mt-2">Mês Atual</p>
                     </CardContent>
                 </Card>
                 <Card className="bg-zinc-900/50 border-zinc-800 backdrop-blur-sm">
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium uppercase tracking-wider text-zinc-400">Despesas</CardTitle>
+                        <CardTitle className="text-sm font-medium uppercase tracking-wider text-zinc-300">Despesas</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="text-3xl font-bold text-white tracking-tight flex items-center gap-2">
@@ -53,18 +53,18 @@ export default function FinancialPage() {
                                 -2%
                             </span>
                         </div>
-                        <p className="text-[10px] uppercase tracking-widest text-zinc-600 mt-2">Mês Atual</p>
+                        <p className="text-[10px] uppercase tracking-widest text-zinc-300 mt-2">Mês Atual</p>
                     </CardContent>
                 </Card>
                 <Card className="bg-zinc-900/50 border-zinc-800 backdrop-blur-sm">
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium uppercase tracking-wider text-zinc-400">Lucro Líquido</CardTitle>
+                        <CardTitle className="text-sm font-medium uppercase tracking-wider text-zinc-300">Lucro Líquido</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="text-3xl font-bold text-blue-500 tracking-tight flex items-center gap-2">
                             R$ 8.250,00
                         </div>
-                        <p className="text-[10px] uppercase tracking-widest text-zinc-600 mt-2">Mês Atual</p>
+                        <p className="text-[10px] uppercase tracking-widest text-zinc-300 mt-2">Mês Atual</p>
                     </CardContent>
                 </Card>
             </div>
@@ -72,7 +72,7 @@ export default function FinancialPage() {
             <Card className="bg-zinc-900/50 border-zinc-800 backdrop-blur-sm min-h-[400px]">
                 <CardHeader>
                     <CardTitle className="text-white text-lg uppercase tracking-wide">Fluxo de Caixa</CardTitle>
-                    <CardDescription className="text-zinc-500 text-xs uppercase tracking-wider">Entradas e saídas dos últimos 30 dias</CardDescription>
+                    <CardDescription className="text-zinc-300 text-xs uppercase tracking-wider">Entradas e saídas dos últimos 30 dias</CardDescription>
                 </CardHeader>
                 <CardContent className="flex items-center justify-center h-[300px] text-zinc-700 uppercase text-xs tracking-[0.2em] border-2 border-dashed border-zinc-800/50 m-4 rounded-sm bg-zinc-950/30">
                     Área para Gráfico Avançado

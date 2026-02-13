@@ -75,7 +75,7 @@ export default function LoginPage() {
                         onClick={() => setRole("admin")}
                         className={`flex-1 py-2 text-xs font-bold uppercase tracking-widest transition-all rounded-sm ${role === "admin"
                             ? "bg-blue-600 text-white shadow-sm"
-                            : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800"
+                            : "text-zinc-300 hover:text-zinc-300 hover:bg-zinc-800"
                             }`}
                     >
                         Administrador
@@ -85,25 +85,20 @@ export default function LoginPage() {
                         onClick={() => setRole("client")}
                         className={`flex-1 py-2 text-xs font-bold uppercase tracking-widest transition-all rounded-sm ${role === "client"
                             ? "bg-blue-600 text-white shadow-sm"
-                            : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800"
+                            : "text-zinc-300 hover:text-zinc-300 hover:bg-zinc-800"
                             }`}
                     >
                         Cliente
                     </button>
                 </div>
 
-                {/* Header Section */}
+                {/* Header Section Removed (Moved to Layout) */}
                 <div className="mb-10 text-center">
-                    <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center border border-zinc-700 bg-zinc-900 text-white shadow-inner">
-                        <Scissors className="h-6 w-6" />
-                    </div>
-                    <h1 className="text-2xl font-bold uppercase tracking-[0.2em] text-white">
-                        Barber SaaS
-                    </h1>
-                    <p className="mt-3 text-xs uppercase tracking-widest text-zinc-500">
+                    <p className="mt-3 text-xs uppercase tracking-widest text-zinc-300">
                         {role === "admin" ? "Acesso Administrativo" : "Área do Cliente"}
                     </p>
                 </div>
+
 
                 {/* Form Section */}
                 <form onSubmit={handleSignIn} className="space-y-6">
@@ -118,7 +113,7 @@ export default function LoginPage() {
                                 onChange={(e) => setEmail(e.target.value)}
                                 disabled={isLoading}
                                 className="border-zinc-800 bg-zinc-900/50 text-white placeholder-transparent focus:border-blue-500 focus:ring-0 rounded-none h-12"
-                                labelClassName="text-zinc-500 text-xs tracking-wider uppercase peer-focus:text-blue-500"
+                                labelClassName="text-zinc-300 text-xs tracking-wider uppercase peer-focus:text-blue-500"
                             />
                         </div>
 
@@ -132,11 +127,11 @@ export default function LoginPage() {
                                 onChange={(e) => setPassword(e.target.value)}
                                 disabled={isLoading}
                                 className="border-zinc-800 bg-zinc-900/50 text-white placeholder-transparent focus:border-blue-500 focus:ring-0 rounded-none h-12 pr-10"
-                                labelClassName="text-zinc-500 text-xs tracking-wider uppercase peer-focus:text-blue-500"
+                                labelClassName="text-zinc-300 text-xs tracking-wider uppercase peer-focus:text-blue-500"
                             />
                             <button
                                 type="button"
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-300 hover:text-white transition-colors"
                                 onClick={() => setShowPassword(!showPassword)}
                             >
                                 {showPassword ? (
@@ -151,7 +146,7 @@ export default function LoginPage() {
                     <div className="flex items-center justify-between">
                         <label className="flex items-center space-x-2 cursor-pointer group">
                             <input type="checkbox" className="h-4 w-4 rounded-none border-zinc-700 bg-zinc-900 text-blue-600 focus:ring-offset-0 focus:ring-0 group-hover:border-blue-500 transition-colors" />
-                            <span className="text-xs text-zinc-500 group-hover:text-zinc-400 tracking-wide uppercase">Lembrar</span>
+                            <span className="text-xs text-zinc-300 group-hover:text-zinc-300 tracking-wide uppercase">Lembrar</span>
                         </label>
                         <Link
                             href="/forgot-password"
@@ -183,7 +178,7 @@ export default function LoginPage() {
                     type="button"
                     disabled={isLoading}
                     onClick={handleGoogleSignIn}
-                    className="w-full rounded-none border-zinc-800 bg-transparent h-12 text-zinc-400 hover:bg-zinc-900 hover:text-white hover:border-zinc-700 transition-all uppercase text-xs tracking-wider font-medium"
+                    className="w-full rounded-none border-zinc-800 bg-transparent h-12 text-zinc-300 hover:bg-zinc-900 hover:text-white hover:border-zinc-700 transition-all uppercase text-xs tracking-wider font-medium"
                 >
                     <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                         <path
@@ -206,11 +201,8 @@ export default function LoginPage() {
                     Google
                 </Button>
 
-                {/* Footer Links */}
-                <div className="mt-8 flex justify-center space-x-6 text-[10px] uppercase tracking-widest text-zinc-600">
-                    <Link href="/terms" className="hover:text-zinc-400 transition-colors">Termos</Link>
-                    <Link href="/privacy" className="hover:text-zinc-400 transition-colors">Privacidade</Link>
-                </div>
+                {/* Footer Links Removed (Moved to Layout) */}
+
             </div>
         </div>
     );

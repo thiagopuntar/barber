@@ -24,12 +24,12 @@ export default function DashboardLayout({
             <Sidebar />
 
             {/* Conteúdo Principal */}
-            <div className="flex flex-1 flex-col md:pl-64 transition-all duration-300 relative z-10">
+            <div className="flex flex-1 flex-col transition-all duration-300 relative z-10">
                 {/* Header Fixo */}
                 <Header />
 
                 {/* Área de Conteúdo Scrollável */}
-                <main className="flex-1 p-4 pt-20 md:p-8 md:pt-24 overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
+                <main className="flex-1 p-4 md:p-8 overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
                     {children}
                 </main>
             </div>

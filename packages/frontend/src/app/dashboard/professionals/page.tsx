@@ -14,7 +14,7 @@ export default function ProfessionalsPage() {
                     <h2 className="text-3xl font-bold uppercase tracking-widest text-white">
                         Profissionais
                     </h2>
-                    <p className="text-zinc-500 text-xs uppercase tracking-wider mt-1">
+                    <p className="text-zinc-300 text-xs uppercase tracking-wider mt-1">
                         Gerencie a equipe da sua barbearia.
                     </p>
                 </div>
@@ -43,7 +43,7 @@ export default function ProfessionalsPage() {
                             </div>
                         </div>
                         <CardContent className="pt-4 space-y-3">
-                            <div className="flex items-center justify-between text-xs uppercase tracking-wider text-zinc-500 border-b border-zinc-800 pb-2">
+                            <div className="flex items-center justify-between text-xs uppercase tracking-wider text-zinc-300 border-b border-zinc-800 pb-2">
                                 <span>Avaliação</span>
                                 <div className="flex items-center text-yellow-500 gap-1">
                                     <Star className="h-3 w-3 fill-current" />

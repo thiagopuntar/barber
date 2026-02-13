@@ -1,52 +1,48 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { Input, InputProps } from "@/components/ui/input";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-interface FloatingLabelInputProps extends InputProps {
-    label: string;
+export interface FloatingLabelInputProps
+    extends React.InputHTMLAttributes<HTMLInputElement> {
+    label?: string;
     labelClassName?: string;
+    containerClassName?: string;
 }
 
-/**
- * Componente que combina um Input e um Label para criar o efeito de "Floating Label".
- * O label se move para cima quando o input tem foco ou contém valor.
- */
 const FloatingLabelInput = React.forwardRef<
     HTMLInputElement,
     FloatingLabelInputProps
->(({ className, label, labelClassName, id, ...props }, ref) => {
-    // Gera um ID único se não for fornecido, para acessibilidade (associar label ao input)
-    const generatedId = React.useId();
-    const inputId = id || generatedId;
-
+>(({ className, label, labelClassName, containerClassName, id, ...props }, ref) => {
+    // Generate a unique id if not provided, for the label to associate with input
+    const inputId = id || React.useId();
 
     return (
-        <div className="relative">
+        <div className={cn("relative", containerClassName)}>
             <Input
-                ref={ref}
                 id={inputId}
-                className={cn(
-                    "peer block w-full appearance-none rounded-none border-gray-300 bg-transparent px-2.5 pb-2.5 pt-4 text-sm text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-blue-500",
-                    className // Classes do Tailwind para o input flutuante
-                )}
-
-                placeholder=" "
+                className={cn("peer placeholder-transparent", className)}
+                placeholder={props.placeholder || " "} // Ensure placeholder exists for peer-placeholder-shown
+                ref={ref}
                 {...props}
             />
             <Label
-                htmlFor={inputId} // Corrigido para fechar a tag corretamente
+                htmlFor={inputId}
                 className={cn(
-                    "absolute left-1 top-2 z-10 origin-[0] -translate-y-4 scale-75 transform px-2 text-sm text-gray-500 duration-300 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-75 peer-focus:px-2 peer-focus:text-blue-600 dark:text-gray-400 dark:peer-focus:text-blue-500",
-                    labelClassName // Classes do Tailwind para a animação do label
+                    "absolute left-3 top-1/2 z-10 -translate-y-1/2 cursor-text px-1 text-sm text-muted-foreground transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:scale-75 peer-focus:bg-background peer-focus:text-primary",
+                    // Custom positioning for "modern" look or matching the user's need.
+                    // The user's page.tsx passes custom labelClassName.
+                    // Adjusting default styles to be more neutral so user's styles can override.
+                    "pointer-events-none origin-[0]",
+                    labelClassName
                 )}
-
             >
                 {label}
             </Label>
         </div>
     );
-});
+}
+);
 FloatingLabelInput.displayName = "FloatingLabelInput";
 
 export { FloatingLabelInput };

@@ -2,6 +2,7 @@
 !jest.config.js
 *.d.ts
 node_modules
+.agent/
 
 # CDK asset staging directory
 .cdk.staging
@@ -9,4 +10,3 @@ cdk.out
 
 # TypeScript build output
 dist/
-.agent/
