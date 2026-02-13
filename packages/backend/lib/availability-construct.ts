@@ -8,13 +8,51 @@ import * as path from "path";
 interface AvailabilityConstructProps {
   table: dynamodb.Table;
   businessIdResource: apigateway.Resource;
+  api: apigateway.RestApi;
+  errorModel: apigateway.Model;
 }
 
 export class AvailabilityConstruct extends Construct {
   constructor(scope: Construct, id: string, props: AvailabilityConstructProps) {
     super(scope, id);
 
-    const { table, businessIdResource } = props;
+    const { table, businessIdResource, api, errorModel } = props;
+
+    // Define Availability model for the response
+    const availabilityResponseModel = api.addModel("AvailabilityResponseModel", {
+      contentType: "application/json",
+      modelName: "AvailabilityResponse",
+      schema: {
+        schema: apigateway.JsonSchemaVersion.DRAFT4,
+        title: "AvailabilityResponse",
+        type: apigateway.JsonSchemaType.OBJECT,
+        properties: {
+          businessId: { type: apigateway.JsonSchemaType.STRING },
+          freeSlots: {
+            type: apigateway.JsonSchemaType.ARRAY,
+            items: {
+              type: apigateway.JsonSchemaType.OBJECT,
+              properties: {
+                date: { type: apigateway.JsonSchemaType.STRING, format: "date-time" },
+                slots: {
+                  type: apigateway.JsonSchemaType.ARRAY,
+                  items: {
+                    type: apigateway.JsonSchemaType.OBJECT,
+                    properties: {
+                      start: { type: apigateway.JsonSchemaType.STRING },
+                      end: { type: apigateway.JsonSchemaType.STRING },
+                    },
+                    required: ["start", "end"],
+                  },
+                },
+              },
+              required: ["date", "slots"],
+            },
+          },
+        },
+        required: ["businessId", "freeSlots"],
+      },
+    });
 
     const getAvailabilityEmployeeLambda = new NodejsFunction(
       this,
@@ -49,7 +87,29 @@ export class AvailabilityConstruct extends Construct {
     // GET /employees/{businessId} endpoint
     employeesResource.addMethod(
       "GET",
-      new apigateway.LambdaIntegration(getAvailabilityEmployeeLambda)
+      new apigateway.LambdaIntegration(getAvailabilityEmployeeLambda),
+      {
+        methodResponses: [
+          {
+            statusCode: "200",
+            responseModels: {
+              "application/json": availabilityResponseModel,
+            },
+          },
+          {
+            statusCode: "400",
+            responseModels: {
+              "application/json": errorModel,
+            },
+          },
+          {
+            statusCode: "500",
+            responseModels: {
+              "application/json": errorModel,
+            },
+          },
+        ],
+      }
     );
   }
 }
