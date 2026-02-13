@@ -5,6 +5,7 @@ import * as cognito from "aws-cdk-lib/aws-cognito";
 export class AuthConstruct extends Construct {
   public readonly userPool: cognito.UserPool;
   public readonly userPoolClient: cognito.UserPoolClient;
+  public readonly userPoolDomain: cognito.UserPoolDomain;
 
   constructor(scope: Construct, id: string) {
     super(scope, id);
@@ -44,10 +45,37 @@ export class AuthConstruct extends Construct {
     this.userPoolClient = new cognito.UserPoolClient(this, "BarberUserPoolClient", {
       userPool: this.userPool,
       userPoolClientName: "BarberWebClient",
+      generateSecret: true,
       authFlows: {
         userPassword: true,
         adminUserPassword: true,
         custom: true,
+      },
+      oAuth: {
+        flows: {
+          authorizationCodeGrant: true,
+        },
+        scopes: [
+          cognito.OAuthScope.OPENID,
+          cognito.OAuthScope.EMAIL,
+          cognito.OAuthScope.PROFILE,
+        ],
+        callbackUrls: ["http://localhost:3000/api/auth/callback/cognito"],
+        logoutUrls: ["http://localhost:3000"],
+      },
+    });
+
+    const safeSuffix = cdk.Names.uniqueId(this)
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, "");
+    const domainPrefix = `barber-auth-${safeSuffix}`
+      .slice(0, 63)
+      .replace(/^-+/, "")
+      .replace(/-+$/, "");
+
+    this.userPoolDomain = this.userPool.addDomain("AuthDomain", {
+      cognitoDomain: {
+        domainPrefix,
       },
     });
 
@@ -60,6 +88,18 @@ export class AuthConstruct extends Construct {
     new cdk.CfnOutput(this, "UserPoolClientId", {
       value: this.userPoolClient.userPoolClientId,
       description: "ID of the User Pool Client",
+    });
+
+    if (this.userPoolClient.userPoolClientSecret) {
+      new cdk.CfnOutput(this, "UserPoolClientSecret", {
+        value: this.userPoolClient.userPoolClientSecret.unsafeUnwrap(),
+        description: "Secret of the User Pool Client",
+      });
+    }
+
+    new cdk.CfnOutput(this, "UserPoolDomain", {
+      value: this.userPoolDomain.domainName,
+      description: "Cognito Hosted UI domain",
     });
   }
 }
