@@ -10,6 +10,7 @@ import { EmployeesConstruct } from "./employees-construct";
 import { AvailabilityConstruct } from "./availability-construct";
 import { AuthConstruct } from "./auth-construct";
 import { IAPIRestLambdaConstruct } from "./api-rest-lambda-construct";
+import { DocsConstruct } from "./docs-construct";
 
 export class AppointmentStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -89,6 +90,11 @@ export class AppointmentStack extends cdk.Stack {
     new cdk.CfnOutput(this, "ApiGatewayUrl", {
       value: api.url,
       description: "API Gateway URL",
+    });
+
+    // Deploy Documentation UI to S3
+    new DocsConstruct(this, "DocsConstruct", {
+      openApiSpec: openApiWithSubstitutions,
     });
   }
 }
