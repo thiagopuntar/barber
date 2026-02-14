@@ -2,13 +2,14 @@ import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
-import * as lambda from "aws-cdk-lib/aws-lambda";
-import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
+import * as iam from "aws-cdk-lib/aws-iam";
 import * as path from "path";
+import * as fs from "fs";
 import { ServicesConstruct } from "./services-construct";
 import { EmployeesConstruct } from "./employees-construct";
 import { AvailabilityConstruct } from "./availability-construct";
 import { AuthConstruct } from "./auth-construct";
+import { IAPIRestLambdaConstruct } from "./api-rest-lambda-construct";
 
 export class BarberStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -29,82 +30,60 @@ export class BarberStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY, // For development only
     });
 
-    // API Gateway
-    const api = new apigateway.RestApi(this, "BarberApi", {
-      restApiName: "Barber API",
-      description: "API for Barber services",
-      defaultCorsPreflightOptions: {
-        allowOrigins: apigateway.Cors.ALL_ORIGINS,
-        allowMethods: apigateway.Cors.ALL_METHODS,
-        allowHeaders: ["Content-Type", "Authorization"],
-      },
-    });
-
-    // Documentation Lambda
-    const getDocsLambda = new NodejsFunction(this, "GetDocsLambda", {
-      runtime: lambda.Runtime.NODEJS_22_X,
-      entry: path.join(__dirname, "../handlers/get-docs.ts"),
-      handler: "handler",
-      bundling: {
-        commandHooks: {
-          beforeBundling(): string[] { return []; },
-          beforeInstall(): string[] { return []; },
-          afterBundling(inputDir: string, outputDir: string): string[] {
-            return [
-              `mkdir -p ${outputDir}/docs`,
-              `cp ${inputDir}/handlers/docs/openapi.json ${outputDir}/docs/openapi.json`
-            ];
-          },
-        },
-      },
-    });
-
-    // Documentation endpoints
-    api.root.addResource("docs").addMethod("GET", new apigateway.LambdaIntegration(getDocsLambda));
-    api.root.addResource("openapi.json").addMethod("GET", new apigateway.LambdaIntegration(getDocsLambda));
-
-    // Generic Error Model
-    const errorModel = api.addModel("ErrorModel", {
-      contentType: "application/json",
-      modelName: "ErrorResponse",
-      schema: {
-        schema: apigateway.JsonSchemaVersion.DRAFT4,
-        title: "ErrorResponse",
-        type: apigateway.JsonSchemaType.OBJECT,
-        properties: {
-          error: { type: apigateway.JsonSchemaType.STRING },
-        },
-        required: ["error"],
-      },
-    });
-
-    // Business ID resource (shared between constructs)
-    const businessIdResource = api.root.addResource("{businessId}");
-
     // Auth Construct
     new AuthConstruct(this, "AuthConstruct");
 
-    // Instantiate endpoint constructs
-    new ServicesConstruct(this, "ServicesConstruct", {
+    const servicesConstruct = new ServicesConstruct(this, "ServicesConstruct", {
       table: barberTable,
-      businessIdResource: businessIdResource,
-      api,
-      errorModel: errorModel,
     });
 
-    new EmployeesConstruct(this, "EmployeesConstruct", {
+    const employeesConstruct = new EmployeesConstruct(this, "EmployeesConstruct", {
       table: barberTable,
-      businessIdResource: businessIdResource,
-      api,
-      errorModel: errorModel,
     });
 
-    new AvailabilityConstruct(this, "AvailabilityConstruct", {
+    const availabilityConstruct = new AvailabilityConstruct(this, "AvailabilityConstruct", {
       table: barberTable,
-      businessIdResource: businessIdResource,
-      api,
-      errorModel: errorModel,
     });
+    const apiRestLambdaConstructs: IAPIRestLambdaConstruct[] = [
+      servicesConstruct,
+      employeesConstruct,
+      availabilityConstruct,
+    ];
+
+    const openApiTemplate = fs.readFileSync(
+      path.join(__dirname, "../openapi.json"),
+      "utf8"
+    );
+    let openApiWithSubstitutions = openApiTemplate
+      .split("${AWS::Region}")
+      .join(cdk.Aws.REGION);
+    for (const apiRestLambdaConstruct of apiRestLambdaConstructs) {
+      openApiWithSubstitutions = openApiWithSubstitutions
+        .split(`\${${apiRestLambdaConstruct.lambdaName}}`)
+        .join(apiRestLambdaConstruct.lambda.functionArn);
+    }
+
+    // API Gateway
+    const api = new apigateway.SpecRestApi(this, "BarberApi", {
+      restApiName: "Barber API",
+      description: "API for Barber services",
+      apiDefinition: apigateway.ApiDefinition.fromInline(JSON.parse(openApiWithSubstitutions)),
+      deployOptions: {
+        stageName: "prod",
+      },
+    });
+
+    const invokePermission = {
+      principal: new iam.ServicePrincipal("apigateway.amazonaws.com"),
+      sourceArn: api.arnForExecuteApi("*"),
+    };
+
+    for (const apiRestLambdaConstruct of apiRestLambdaConstructs) {
+      apiRestLambdaConstruct.lambda.addPermission(
+        `AllowApiGatewayInvoke${apiRestLambdaConstruct.lambdaName}`,
+        invokePermission
+      );
+    }
 
     // Output the API Gateway URL
     new cdk.CfnOutput(this, "ApiGatewayUrl", {

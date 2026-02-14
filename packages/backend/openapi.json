@@ -1,0 +1,412 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Barber API",
+    "description": "API for Barber services",
+    "version": "2026-02-14T00:00:00Z"
+  },
+  "tags": [
+    {
+      "name": "Services",
+      "description": "Service catalog endpoints"
+    },
+    {
+      "name": "Employees",
+      "description": "Employee listing endpoints"
+    },
+    {
+      "name": "Availability",
+      "description": "Availability search endpoints"
+    }
+  ],
+  "paths": {
+    "/{businessId}/services": {
+      "get": {
+        "tags": [
+          "Services"
+        ],
+        "operationId": "getServices",
+        "parameters": [
+          {
+            "name": "businessId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Services fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServicesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "type": "aws_proxy",
+          "httpMethod": "POST",
+          "uri": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetServicesLambdaArn}/invocations",
+          "passthroughBehavior": "when_no_match"
+        }
+      }
+    },
+    "/{businessId}/employees": {
+      "get": {
+        "tags": [
+          "Employees"
+        ],
+        "operationId": "getEmployees",
+        "parameters": [
+          {
+            "name": "businessId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Employees fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployeesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "type": "aws_proxy",
+          "httpMethod": "POST",
+          "uri": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetEmployeesLambdaArn}/invocations",
+          "passthroughBehavior": "when_no_match"
+        }
+      }
+    },
+    "/{businessId}/availability/services/{serviceId}/employees/{employeeId}": {
+      "get": {
+        "tags": [
+          "Availability"
+        ],
+        "operationId": "getEmployeeAvailability",
+        "parameters": [
+          {
+            "name": "businessId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "serviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "initialDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "finalDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Availability fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvailabilityResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "type": "aws_proxy",
+          "httpMethod": "POST",
+          "uri": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetAvailabilityEmployeeLambdaArn}/invocations",
+          "passthroughBehavior": "when_no_match"
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ServicesResponse": {
+        "title": "ServicesResponse",
+        "required": [
+          "businessId",
+          "services"
+        ],
+        "type": "object",
+        "properties": {
+          "businessId": {
+            "type": "string"
+          },
+          "services": {
+            "type": "array",
+            "items": {
+              "required": [
+                "duration",
+                "id",
+                "name",
+                "price"
+              ],
+              "type": "object",
+              "properties": {
+                "duration": {
+                  "type": "number"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "price": {
+                  "type": "number"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          }
+        }
+      },
+      "EmployeesResponse": {
+        "title": "EmployeesResponse",
+        "required": [
+          "businessId",
+          "employees"
+        ],
+        "type": "object",
+        "properties": {
+          "businessId": {
+            "type": "string"
+          },
+          "employees": {
+            "type": "array",
+            "items": {
+              "required": [
+                "id",
+                "name"
+              ],
+              "type": "object",
+              "properties": {
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "availability": {
+                  "type": "array",
+                  "items": {
+                    "required": [
+                      "range",
+                      "weekDay"
+                    ],
+                    "type": "object",
+                    "properties": {
+                      "weekDay": {
+                        "type": "number"
+                      },
+                      "range": {
+                        "type": "array",
+                        "items": {
+                          "required": [
+                            "end",
+                            "start"
+                          ],
+                          "type": "object",
+                          "properties": {
+                            "start": {
+                              "type": "string"
+                            },
+                            "end": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          }
+        }
+      },
+      "AvailabilityResponse": {
+        "title": "AvailabilityResponse",
+        "required": [
+          "businessId",
+          "freeSlots"
+        ],
+        "type": "object",
+        "properties": {
+          "freeSlots": {
+            "type": "array",
+            "items": {
+              "required": [
+                "date",
+                "slots"
+              ],
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "slots": {
+                  "type": "array",
+                  "items": {
+                    "required": [
+                      "end",
+                      "start"
+                    ],
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "string"
+                      },
+                      "end": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "businessId": {
+            "type": "string"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "title": "ErrorResponse",
+        "required": [
+          "error"
+        ],
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "x-amazon-apigateway-security-policy": "TLS_1_0"
+}
