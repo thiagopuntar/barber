@@ -1,8 +1,8 @@
 {
-  "name": "urutu-barber",
+  "name": "appointment",
   "version": "0.1.0",
   "bin": {
-    "urutu-barber": "bin/urutu-barber.js"
+    "appointment": "bin/appointment.js"
   },
   "scripts": {
     "build": "tsc",
@@ -12,7 +12,7 @@
     "seed": "ts-node scripts/seed-data.ts",
     "format": "prettier --write \"**/*.{js,ts,json,md}\"",
     "format:check": "prettier --check \"**/*.{js,ts,json,md}\"",
-    "export-api": "aws apigateway get-export --rest-api-id $(aws apigateway get-rest-apis --query \"items[?name=='Barber API'].id | [0]\" --output text) --stage-name prod --region us-east-1 --export-type oas30 openapi.json"
+    "export-api": "aws apigateway get-export --rest-api-id $(aws apigateway get-rest-apis --query \"items[?name=='Appointment API'].id | [0]\" --output text) --stage-name prod --region us-east-1 --export-type oas30 openapi.json"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.156",

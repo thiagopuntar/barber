@@ -30,7 +30,7 @@ export class ServicesConstruct extends Construct implements IAPIRestLambdaConstr
       },
       environment: {
         NODE_ENV: "production",
-        BARBER_TABLE_NAME: table.tableName,
+        APPOINTMENT_TABLE_NAME: table.tableName,
       },
     });
 

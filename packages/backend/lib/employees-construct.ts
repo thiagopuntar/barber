@@ -29,7 +29,7 @@ export class EmployeesConstruct extends Construct implements IAPIRestLambdaConst
       },
       environment: {
         NODE_ENV: "production",
-        BARBER_TABLE_NAME: table.tableName,
+        APPOINTMENT_TABLE_NAME: table.tableName,
       },
     });
 

@@ -3,7 +3,7 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
 
 export const metadata: Metadata = {
-    title: "Dashboard | Barber SaaS",
+    title: "Dashboard | Appointment SaaS",
     description: "Visão geral do seu negócio.",
 };
 

@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Barber API",
-    "description": "API for Barber services",
+    "title": "Appointment API",
+    "description": "API for Appointment services",
     "version": "2026-02-14T00:00:00Z"
   },
   "tags": [

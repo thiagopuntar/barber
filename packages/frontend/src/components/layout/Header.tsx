@@ -28,7 +28,7 @@ export function Header() {
                     {/* Informações do Usuário (visível apenas em Desktop) */}
                     <div className="hidden text-right text-sm md:block">
                         <p className="font-bold text-zinc-200 text-xs uppercase tracking-wide">Admin User</p>
-                        <p className="text-[10px] text-zinc-300 uppercase tracking-wider">admin@barber.com</p>
+                        <p className="text-[10px] text-zinc-300 uppercase tracking-wider">admin@appointment.com</p>
                     </div>
                     {/* Avatar do Usuário com Fallback */}
                     <Avatar className="h-8 w-8 border border-zinc-700">

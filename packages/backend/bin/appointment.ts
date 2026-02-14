@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 import * as cdk from "aws-cdk-lib";
-import { BarberStack } from "../lib/barber-stack";
+import { AppointmentStack } from "../lib/appointment-stack";
 
 const app = new cdk.App();
-new BarberStack(app, "BarberStack", {
+new AppointmentStack(app, "AppointmentStack", {
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,
    * but a single synthesized template can be deployed anywhere. */

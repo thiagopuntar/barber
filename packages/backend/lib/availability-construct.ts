@@ -32,7 +32,7 @@ export class AvailabilityConstruct extends Construct implements IAPIRestLambdaCo
         },
         environment: {
           NODE_ENV: "production",
-          BARBER_TABLE_NAME: table.tableName,
+          APPOINTMENT_TABLE_NAME: table.tableName,
         },
       }
     );

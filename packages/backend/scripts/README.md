@@ -23,8 +23,8 @@ npx ts-node scripts/seed-data.ts <businessId> <numServices> <numEmployees>
 ### Examples
 
 ```bash
-# Create 5 services and 3 employees for business "barber123"
-npm run seed barber123 5 3
+# Create 5 services and 3 employees for business "appt123"
+npm run seed appt123 5 3
 
 # Create 10 services and 5 employees for business "salon456"
 npm run seed salon456 10 5
@@ -34,7 +34,7 @@ npm run seed salon456 10 5
 
 The script uses the following environment variable:
 
-- `BARBER_TABLE_NAME`: DynamoDB table name (defaults to "BarberTable")
+- `APPOINTMENT_TABLE_NAME`: DynamoDB table name (defaults to "AppointmentTable")
 
 Make sure you have AWS credentials configured and the DynamoDB table deployed before running the script.
 

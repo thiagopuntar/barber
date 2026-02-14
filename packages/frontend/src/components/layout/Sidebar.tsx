@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
     LayoutDashboard,
-    Scissors,
+    Calendar,
     Users,
     UserCircle,
     DollarSign,
@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 // Definição dos itens de navegação
 const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Serviços", href: "/dashboard/services", icon: Scissors },
+    { name: "Serviços", href: "/dashboard/services", icon: Calendar },
     { name: "Profissionais", href: "/dashboard/professionals", icon: Users },
     { name: "Clientes", href: "/dashboard/clients", icon: UserCircle },
     { name: "Financeiro", href: "/dashboard/financial", icon: DollarSign },
@@ -68,9 +68,9 @@ export function Sidebar() {
                 <div className="flex h-16 items-center justify-center border-b border-zinc-800 px-6 bg-zinc-950/50 backdrop-blur-md">
                     <div className="flex items-center gap-2">
                         <div className="flex h-8 w-8 items-center justify-center border border-zinc-700 bg-zinc-900 text-white shadow-inner rounded-sm">
-                            <Scissors className="h-4 w-4" />
+                            <Calendar className="h-4 w-4" />
                         </div>
-                        <span className="text-lg font-bold tracking-widest text-white uppercase">Barber SaaS</span>
+                        <span className="text-lg font-bold tracking-widest text-white uppercase">Appointment App</span>
                     </div>
                 </div>
 

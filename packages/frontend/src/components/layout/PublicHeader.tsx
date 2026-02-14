@@ -1,6 +1,6 @@
 "use client";
 
-import { Scissors, LogOut } from "lucide-react";
+import { Calendar, LogOut } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
@@ -35,10 +35,10 @@ export function PublicHeader() {
                 </div>
             )}
             <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center border border-zinc-700 bg-zinc-900 text-white shadow-inner">
-                <Scissors className="h-6 w-6" />
+                <Calendar className="h-6 w-6" />
             </div>
             <h1 className="text-2xl font-bold uppercase tracking-[0.2em] text-white">
-                Barber SaaS
+                Appointment App
             </h1>
         </div>
     );

@@ -11,13 +11,13 @@ import { AvailabilityConstruct } from "./availability-construct";
 import { AuthConstruct } from "./auth-construct";
 import { IAPIRestLambdaConstruct } from "./api-rest-lambda-construct";
 
-export class BarberStack extends cdk.Stack {
+export class AppointmentStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     // DynamoDB table
-    const barberTable = new dynamodb.Table(this, "BarberTable", {
-      tableName: "BarberTable",
+    const appointmentTable = new dynamodb.Table(this, "AppointmentTable", {
+      tableName: "AppointmentTable",
       partitionKey: {
         name: "pk",
         type: dynamodb.AttributeType.STRING,
@@ -34,15 +34,15 @@ export class BarberStack extends cdk.Stack {
     new AuthConstruct(this, "AuthConstruct");
 
     const servicesConstruct = new ServicesConstruct(this, "ServicesConstruct", {
-      table: barberTable,
+      table: appointmentTable,
     });
 
     const employeesConstruct = new EmployeesConstruct(this, "EmployeesConstruct", {
-      table: barberTable,
+      table: appointmentTable,
     });
 
     const availabilityConstruct = new AvailabilityConstruct(this, "AvailabilityConstruct", {
-      table: barberTable,
+      table: appointmentTable,
     });
     const apiRestLambdaConstructs: IAPIRestLambdaConstruct[] = [
       servicesConstruct,
@@ -64,9 +64,9 @@ export class BarberStack extends cdk.Stack {
     }
 
     // API Gateway
-    const api = new apigateway.SpecRestApi(this, "BarberApi", {
-      restApiName: "Barber API",
-      description: "API for Barber services",
+    const api = new apigateway.SpecRestApi(this, "AppointmentApi", {
+      restApiName: "Appointment API",
+      description: "API for Appointment services",
       apiDefinition: apigateway.ApiDefinition.fromInline(JSON.parse(openApiWithSubstitutions)),
       deployOptions: {
         stageName: "prod",

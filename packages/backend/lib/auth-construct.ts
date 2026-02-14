@@ -11,8 +11,8 @@ export class AuthConstruct extends Construct {
     super(scope, id);
 
     // Create Cognito User Pool
-    this.userPool = new cognito.UserPool(this, "BarberUserPool", {
-      userPoolName: "BarberUserPool",
+    this.userPool = new cognito.UserPool(this, "AppointmentUserPool", {
+      userPoolName: "AppointmentUserPool",
       selfSignUpEnabled: true,
       signInAliases: {
         email: true,
@@ -42,9 +42,9 @@ export class AuthConstruct extends Construct {
     });
 
     // Create User Pool Client
-    this.userPoolClient = new cognito.UserPoolClient(this, "BarberUserPoolClient", {
+    this.userPoolClient = new cognito.UserPoolClient(this, "AppointmentUserPoolClient", {
       userPool: this.userPool,
-      userPoolClientName: "BarberWebClient",
+      userPoolClientName: "AppointmentWebClient",
       generateSecret: true,
       authFlows: {
         userPassword: true,
@@ -68,7 +68,7 @@ export class AuthConstruct extends Construct {
     const safeSuffix = cdk.Names.uniqueId(this)
       .toLowerCase()
       .replace(/[^a-z0-9-]/g, "");
-    const domainPrefix = `barber-auth-${safeSuffix}`
+    const domainPrefix = `appointment-auth-${safeSuffix}`
       .slice(0, 63)
       .replace(/^-+/, "")
       .replace(/-+$/, "");

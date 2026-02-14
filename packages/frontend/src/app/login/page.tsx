@@ -56,7 +56,7 @@ export default function LoginPage() {
             <div className="absolute inset-0 z-0 select-none">
                 <Image
                     src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=2074&auto=format&fit=crop"
-                    alt="Barbershop Background"
+                    alt="Appointment Background"
                     fill
                     className="object-cover object-center opacity-40 grayscale contrast-125"
                     priority

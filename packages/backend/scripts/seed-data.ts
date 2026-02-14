@@ -38,7 +38,7 @@ async function generateService(businessId: string, index: number): Promise<Servi
   const now = new Date().toISOString();
   const serviceId = uuidv4();
 
-  // Generate random barber/beauty service names using faker
+  // Generate random appointment/beauty service names using faker
   const serviceTypes = [
     "Haircut",
     "Beard Trim",
@@ -55,6 +55,8 @@ async function generateService(businessId: string, index: number): Promise<Servi
     "Hair Extension",
     "Perm",
     "Deep Conditioning",
+    "Consultation",
+    "General Appointment",
   ];
   const serviceName = faker.helpers.arrayElement(serviceTypes);
 
@@ -125,7 +127,7 @@ async function seedData(businessId: string, numServices: number, numEmployees: n
     throw new Error("Number of services and employees must be non-negative");
   }
 
-  const tableName = process.env.BARBER_TABLE_NAME || "BarberTable";
+  const tableName = process.env.APPOINTMENT_TABLE_NAME || "AppointmentTable";
 
   console.log(`Seeding data for business: ${businessId}`);
   console.log(`Table: ${tableName}`);

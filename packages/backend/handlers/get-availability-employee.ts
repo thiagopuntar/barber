@@ -27,9 +27,9 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     }
 
     // Get table name from environment variables
-    const tableName = process.env.BARBER_TABLE_NAME;
+    const tableName = process.env.APPOINTMENT_TABLE_NAME;
     if (!tableName) {
-      throw new Error("BARBER_TABLE_NAME environment variable is not set");
+      throw new Error("APPOINTMENT_TABLE_NAME environment variable is not set");
     }
 
     // Initialize repository and fetch services

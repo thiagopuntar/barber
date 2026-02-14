@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 
 // Metadados da aplicação (título e descrição para SEO)
 export const metadata: Metadata = {
-  title: "Barber SaaS",
-  description: "Gerencie sua barbearia com facilidade.",
+  title: "Appointment SaaS",
+  description: "Gerencie seu negócio de agendamentos com facilidade.",
 };
 
 // Layout raiz da aplicação
