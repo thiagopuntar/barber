@@ -13,16 +13,20 @@ class AppointmentRepository implements IAppointmentRepository {
     this.dynamoClient = DynamoDBDocumentClient.from(client);
   }
 
+  private getPk(businessId: string): string {
+    return `${businessId}#appointment`;
+  }
+
   async getAppointmentsByEmployeeIdAndDate(
     businessId: string,
     employeeId: string,
     date: Date
   ): Promise<Appointment[]> {
     try {
-      const pk = `business#${businessId}#type#appointment`;
+      const pk = this.getPk(businessId);
       console.debug("pk", pk);
 
-      const sk = `employee#${employeeId}#date#${date.toISOString().split("T")[0]}`;
+      const sk = `${employeeId}#${date.toISOString().split("T")[0]}`;
       console.debug("sk", sk);
 
       const command = new QueryCommand({

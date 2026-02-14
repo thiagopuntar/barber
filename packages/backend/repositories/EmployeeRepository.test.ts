@@ -37,16 +37,18 @@ describe("EmployeeRepository", () => {
       // Arrange
       const mockDynamoItems = [
         {
-          pk: "business#business-123#type#employee",
-          sk: "employee#emp-1",
+          pk: "business-123#employee",
+          sk: "emp-1",
           name: "John Doe",
+          availability: [],
           createdAt: "2023-01-01T00:00:00Z",
           updatedAt: "2023-01-02T00:00:00Z",
         },
         {
-          pk: "business#business-123#type#employee",
-          sk: "employee#emp-2",
+          pk: "business-123#employee",
+          sk: "emp-2",
           name: "Jane Smith",
+          availability: [],
           createdAt: "2023-01-03T00:00:00Z",
           updatedAt: "2023-01-04T00:00:00Z",
         },
@@ -134,7 +136,7 @@ describe("EmployeeRepository", () => {
         TableName: tableName,
         KeyConditionExpression: "pk = :pk",
         ExpressionAttributeValues: {
-          ":pk": `business#${businessId}#type#employee`,
+          ":pk": `${businessId}#employee`,
         },
       });
     });
@@ -155,9 +157,10 @@ describe("EmployeeRepository", () => {
     it("should properly map DynamoDB item to Employee object", async () => {
       // Arrange
       const mockDynamoItem = {
-        pk: "business#business-123#type#employee",
-        sk: "employee#unique-id-123",
+        pk: "business-123#employee",
+        sk: "unique-id-123",
         name: "Test Employee",
+        availability: [],
         createdAt: "2024-01-15T10:30:00Z",
         updatedAt: "2024-01-16T14:45:00Z",
       };

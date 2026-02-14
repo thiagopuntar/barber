@@ -39,8 +39,8 @@ describe("AppointmentRepository", () => {
       // Arrange
       const mockDynamoItems = [
         {
-          pk: "business#business-123#type#appointment",
-          sk: "employee#employee-456#date#2024-01-15#time#10:00",
+          pk: "business-123#appointment",
+          sk: "employee-456#2024-01-15#10:00",
           id: "appointment-1",
           date: "2024-01-15T00:00:00.000Z",
           initialTime: "10:00",
@@ -49,8 +49,8 @@ describe("AppointmentRepository", () => {
           updatedAt: "2024-01-15T08:30:00.000Z",
         },
         {
-          pk: "business#business-123#type#appointment",
-          sk: "employee#employee-456#date#2024-01-15#time#14:00",
+          pk: "business-123#appointment",
+          sk: "employee-456#2024-01-15#14:00",
           id: "appointment-2",
           date: "2024-01-15T00:00:00.000Z",
           initialTime: "14:00",
@@ -77,8 +77,8 @@ describe("AppointmentRepository", () => {
         TableName: tableName,
         KeyConditionExpression: "pk = :pk and sk = begins_with(:sk)",
         ExpressionAttributeValues: {
-          ":pk": `business#${businessId}#type#appointment`,
-          ":sk": `employee#${employeeId}#date#${date.toISOString().split("T")[0]}`,
+          ":pk": `${businessId}#appointment`,
+          ":sk": `${employeeId}#${date.toISOString().split("T")[0]}`,
         },
       });
 
@@ -162,7 +162,7 @@ describe("AppointmentRepository", () => {
       expect(mockedQueryCommand).toHaveBeenCalledWith(
         expect.objectContaining({
           ExpressionAttributeValues: expect.objectContaining({
-            ":pk": `business#${businessId}#type#appointment`,
+            ":pk": `${businessId}#appointment`,
           }),
         })
       );
@@ -179,7 +179,7 @@ describe("AppointmentRepository", () => {
       expect(mockedQueryCommand).toHaveBeenCalledWith(
         expect.objectContaining({
           ExpressionAttributeValues: expect.objectContaining({
-            ":sk": `employee#${employeeId}#date#${date.toISOString().split("T")[0]}`,
+            ":sk": `${employeeId}#${date.toISOString().split("T")[0]}`,
           }),
         })
       );
@@ -197,7 +197,7 @@ describe("AppointmentRepository", () => {
       expect(mockedQueryCommand).toHaveBeenCalledWith(
         expect.objectContaining({
           ExpressionAttributeValues: expect.objectContaining({
-            ":sk": `employee#${employeeId}#date#2024-01-15`,
+            ":sk": `${employeeId}#2024-01-15`,
           }),
         })
       );
@@ -206,8 +206,8 @@ describe("AppointmentRepository", () => {
     it("should correctly map all appointment properties", async () => {
       // Arrange
       const mockDynamoItem = {
-        pk: "business#business-123#type#appointment",
-        sk: "employee#employee-456#date#2024-01-15#time#09:00",
+        pk: "business-123#appointment",
+        sk: "employee-456#2024-01-15#09:00",
         id: "appointment-test",
         date: "2024-01-15T00:00:00.000Z",
         initialTime: "09:00",
@@ -242,8 +242,8 @@ describe("AppointmentRepository", () => {
       // Arrange
       const mockDynamoItems = [
         {
-          pk: "business#business-123#type#appointment",
-          sk: "employee#employee-456#date#2024-01-15#time#09:00",
+          pk: "business-123#appointment",
+          sk: "employee-456#2024-01-15#09:00",
           id: "appointment-morning",
           date: "2024-01-15T00:00:00.000Z",
           initialTime: "09:00",
@@ -252,8 +252,8 @@ describe("AppointmentRepository", () => {
           updatedAt: "2024-01-14T21:00:00.000Z",
         },
         {
-          pk: "business#business-123#type#appointment",
-          sk: "employee#employee-456#date#2024-01-15#time#11:00",
+          pk: "business-123#appointment",
+          sk: "employee-456#2024-01-15#11:00",
           id: "appointment-late-morning",
           date: "2024-01-15T00:00:00.000Z",
           initialTime: "11:00",
@@ -262,8 +262,8 @@ describe("AppointmentRepository", () => {
           updatedAt: "2024-01-14T21:15:00.000Z",
         },
         {
-          pk: "business#business-123#type#appointment",
-          sk: "employee#employee-456#date#2024-01-15#time#14:00",
+          pk: "business-123#appointment",
+          sk: "employee-456#2024-01-15#14:00",
           id: "appointment-afternoon",
           date: "2024-01-15T00:00:00.000Z",
           initialTime: "14:00",

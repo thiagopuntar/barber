@@ -13,14 +13,18 @@ class ServiceRepository implements IServiceRepository {
     this.dynamoClient = DynamoDBDocumentClient.from(client);
   }
 
+  private getPk(businessId: string): string {
+    return `${businessId}#service`;
+  }
+
   async getServiceById(businessId: string, serviceId: string): Promise<Service> {
     try {
-      const pk = `business#${businessId}#type#service`;
+      const pk = this.getPk(businessId);
       const sk = serviceId;
 
       const command = new GetCommand({
         TableName: this.tableName,
-        Key: { pk: pk, sk: sk },
+        Key: { pk, sk },
       });
 
       const result = await this.dynamoClient.send(command);
@@ -30,7 +34,7 @@ class ServiceRepository implements IServiceRepository {
       }
 
       const service = new Service();
-      service.id = result.Item.sk.split("#")[1] as string;
+      service.id = result.Item.sk as string;
       service.name = result.Item.name as string;
       service.description = result.Item.description as string;
       service.price = result.Item.price as number;
@@ -47,7 +51,7 @@ class ServiceRepository implements IServiceRepository {
 
   async getServicesByBusinessId(businessId: string): Promise<Service[]> {
     try {
-      const pk = `business#${businessId}#type#service`;
+      const pk = this.getPk(businessId);
       console.debug("pk", pk);
 
       const command = new QueryCommand({
@@ -65,7 +69,7 @@ class ServiceRepository implements IServiceRepository {
       }
 
       return result.Items.map(item => ({
-        id: item.sk.split("#")[1] as string,
+        id: item.sk as string,
         name: item.name as string,
         description: item.description as string,
         price: item.price as number,

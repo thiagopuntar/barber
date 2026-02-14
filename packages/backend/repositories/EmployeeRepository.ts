@@ -12,9 +12,13 @@ export class EmployeeRepository implements IEmployeeRepository {
     this.dynamoClient = DynamoDBDocumentClient.from(client);
   }
 
+  private getPk(businessId: string): string {
+    return `${businessId}#employee`;
+  }
+
   async getEmployeesByBusinessId(businessId: string): Promise<Employee[]> {
     try {
-      const pk = `business#${businessId}#type#employee`;
+      const pk = this.getPk(businessId);
       console.debug("pk", pk);
 
       const command = new QueryCommand({
@@ -33,7 +37,7 @@ export class EmployeeRepository implements IEmployeeRepository {
 
       return result.Items.map(item => {
         const employee = new Employee();
-        employee.id = item.sk.split("#")[1] as string;
+        employee.id = item.sk as string;
         employee.name = item.name as string;
         employee.createdAt = new Date(item.createdAt as string);
         employee.updatedAt = new Date(item.updatedAt as string);
@@ -48,7 +52,7 @@ export class EmployeeRepository implements IEmployeeRepository {
 
   async getEmployee(businessId: string, employeeId: string): Promise<Employee> {
     try {
-      const pk = `business#${businessId}#type#employee`;
+      const pk = this.getPk(businessId);
       const sk = employeeId;
 
       const command = new GetCommand({

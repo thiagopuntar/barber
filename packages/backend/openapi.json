@@ -17,9 +17,79 @@
     {
       "name": "Availability",
       "description": "Availability search endpoints"
+    },
+    {
+      "name": "Business",
+      "description": "Business detail endpoints"
     }
   ],
   "paths": {
+    "/{businessId}": {
+      "get": {
+        "tags": [
+          "Business"
+        ],
+        "operationId": "getBusiness",
+        "parameters": [
+          {
+            "name": "businessId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Business details fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BusinessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Business not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "type": "aws_proxy",
+          "httpMethod": "POST",
+          "uri": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetBusinessLambdaArn}/invocations",
+          "passthroughBehavior": "when_no_match"
+        }
+      }
+    },
     "/{businessId}/services": {
       "get": {
         "tags": [
@@ -403,6 +473,75 @@
         "properties": {
           "error": {
             "type": "string"
+          }
+        }
+      },
+      "BusinessResponse": {
+        "title": "BusinessResponse",
+        "required": [
+          "business"
+        ],
+        "type": "object",
+        "properties": {
+          "business": {
+            "type": "object",
+            "required": [
+              "address",
+              "city",
+              "createdAt",
+              "description",
+              "id",
+              "image",
+              "name",
+              "updatedAt",
+              "url"
+            ],
+            "properties": {
+              "address": {
+                "type": "string"
+              },
+              "city": {
+                "type": "string"
+              },
+              "country": {
+                "type": "string"
+              },
+              "createdAt": {
+                "format": "date-time",
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "image": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "phone": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string"
+              },
+              "updatedAt": {
+                "format": "date-time",
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              },
+              "zip": {
+                "type": "string"
+              }
+            }
           }
         }
       }

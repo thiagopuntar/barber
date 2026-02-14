@@ -8,6 +8,7 @@ import * as fs from "fs";
 import { ServicesConstruct } from "./services-construct";
 import { EmployeesConstruct } from "./employees-construct";
 import { AvailabilityConstruct } from "./availability-construct";
+import { BusinessConstruct } from "./business-construct";
 import { AuthConstruct } from "./auth-construct";
 import { IAPIRestLambdaConstruct } from "./api-rest-lambda-construct";
 import { DocsConstruct } from "./docs-construct";
@@ -45,10 +46,16 @@ export class AppointmentStack extends cdk.Stack {
     const availabilityConstruct = new AvailabilityConstruct(this, "AvailabilityConstruct", {
       table: appointmentTable,
     });
+
+    const businessConstruct = new BusinessConstruct(this, "BusinessConstruct", {
+      table: appointmentTable,
+    });
+
     const apiRestLambdaConstructs: IAPIRestLambdaConstruct[] = [
       servicesConstruct,
       employeesConstruct,
       availabilityConstruct,
+      businessConstruct,
     ];
 
     const openApiTemplate = fs.readFileSync(

@@ -37,8 +37,8 @@ describe("ServiceRepository", () => {
       // Arrange
       const mockDynamoItems = [
         {
-          pk: "business#business-123#type#service",
-          sk: "service#svc-1",
+          pk: "business-123#service",
+          sk: "svc-1",
           name: "Haircut",
           description: "Basic haircut service",
           price: 25.0,
@@ -47,8 +47,8 @@ describe("ServiceRepository", () => {
           updatedAt: "2023-01-02T00:00:00Z",
         },
         {
-          pk: "business#business-123#type#service",
-          sk: "service#svc-2",
+          pk: "business-123#service",
+          sk: "svc-2",
           name: "Shampoo",
           description: "Hair washing and shampoo",
           price: 15.0,
@@ -147,7 +147,7 @@ describe("ServiceRepository", () => {
         TableName: tableName,
         KeyConditionExpression: "pk = :pk",
         ExpressionAttributeValues: {
-          ":pk": `business#${businessId}#type#service`,
+          ":pk": `${businessId}#service`,
         },
       });
     });
@@ -168,8 +168,8 @@ describe("ServiceRepository", () => {
     it("should properly map DynamoDB item to Service object", async () => {
       // Arrange
       const mockDynamoItem = {
-        pk: "business#business-123#type#service",
-        sk: "service#unique-service-id",
+        pk: "business-123#service",
+        sk: "unique-service-id",
         name: "Test Service",
         description: "A test service description",
         price: 50.0,

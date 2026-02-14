@@ -29,7 +29,49 @@ interface EmployeeData {
   updatedAt: string;
 }
 
+interface BusinessData {
+  pk: string;
+  sk: string;
+  name: string;
+  description: string;
+  image: string;
+  url: string;
+  address: string;
+  city: string;
+  state?: string;
+  zip?: string;
+  country?: string;
+  phone?: string;
+  email?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 // Mock data generators using faker
+
+async function generateBusiness(businessId: string): Promise<BusinessData> {
+  const { faker } = await import("@faker-js/faker");
+
+  const now = new Date().toISOString();
+
+  return {
+    pk: "business",
+    sk: businessId,
+    name: faker.company.name() + " Barbershop",
+    description: faker.company.catchPhrase(),
+    image: faker.image.url(),
+    url: faker.internet.url(),
+    address: faker.location.streetAddress(),
+    city: faker.location.city(),
+    state: faker.location.state({ abbreviated: true }),
+    zip: faker.location.zipCode(),
+    country: "USA",
+    phone: faker.phone.number(),
+    email: faker.internet.email(),
+    createdAt: now,
+    updatedAt: now,
+  };
+}
 
 async function generateService(businessId: string, index: number): Promise<ServiceData> {
   const { v4: uuidv4 } = await import("uuid");
@@ -61,7 +103,7 @@ async function generateService(businessId: string, index: number): Promise<Servi
   const serviceName = faker.helpers.arrayElement(serviceTypes);
 
   return {
-    pk: `business#${businessId}#type#service`,
+    pk: `${businessId}#service`,
     sk: serviceId,
     name: serviceName,
     description: faker.lorem.sentence({ min: 3, max: 8 }), // Random description
@@ -80,7 +122,7 @@ async function generateEmployee(businessId: string, index: number): Promise<Empl
   const employeeId = uuidv4();
 
   return {
-    pk: `business#${businessId}#type#employee`,
+    pk: `${businessId}#employee`,
     sk: employeeId,
     name: faker.person.fullName(), // Random full name using faker
     availability: [
@@ -140,6 +182,16 @@ async function seedData(businessId: string, numServices: number, numEmployees: n
   const dynamoClient = DynamoDBDocumentClient.from(client);
 
   try {
+    // Seed business
+    console.log("\nSeeding business...");
+    const business = await generateBusiness(businessId);
+    const businessCommand = new PutCommand({
+      TableName: tableName,
+      Item: business,
+    });
+    await dynamoClient.send(businessCommand);
+    console.log(`✓ Created business: ${business.name} (ID: ${business.sk})`);
+
     // Seed services
     console.log("\nSeeding services...");
     for (let i = 0; i < numServices; i++) {
@@ -213,4 +265,4 @@ if (require.main === module) {
   main();
 }
 
-export { seedData, generateService, generateEmployee };
+export { seedData, generateService, generateEmployee, generateBusiness };
