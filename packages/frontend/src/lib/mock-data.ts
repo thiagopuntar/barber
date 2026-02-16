@@ -76,5 +76,21 @@ export const COMPANIES: Record<string, Company> = {
         timeSlots: [
             "10:00", "11:00"
         ]
+    },
+    "barber123": {
+        name: "Appointment Test Ltda",
+        slug: "appointment-test",
+        image: "https://images.unsplash.com/photo-1621600411688-4be93cd68504?w=200&h=200&fit=crop",
+        mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14697.5452!2d-43.1!3d-22.9!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjLCsDU0JzAwLjAiUyA0M8KwMDYnMDAuMCJX!5e0!3m2!1spt-BR!2sbr!4v1620000000000!5m2!1spt-BR!2sbr",
+        services: [
+            { id: 1, name: "Test Service", price: "R$ 10,00", duration: "15 min", icon: CalendarIcon },
+        ],
+        professionals: [
+            { id: 6, name: "Professional Teste", role: "Tester", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop" },
+        ],
+        timeSlots: [
+            "10:00", "11:00"
+        ]
     }
+
 };
