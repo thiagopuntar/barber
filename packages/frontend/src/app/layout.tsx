@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { PublicHeader } from "@/components/layout/PublicHeader";
-import { PublicFooter } from "@/components/layout/PublicFooter";
-
+import { ThemeProvider } from "@/components/theme-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,28 +15,31 @@ const geistMono = Geist_Mono({
 
 // Metadados da aplicação (título e descrição para SEO)
 export const metadata: Metadata = {
-  title: "Appointment SaaS",
+  title: "AgendaFácil Marketplace",
   description: "Gerencie seu negócio de agendamentos com facilidade.",
 };
 
 // Layout raiz da aplicação
 // Envolve todas as páginas com as configurações globais (fontes, idioma, estilos)
 export default function RootLayout({
-
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans`}
       >
-        <PublicHeader />
-        {children}
-        <PublicFooter />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
-
     </html>
   );
 }

@@ -2,285 +2,237 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Scissors, Calendar as CalendarIcon, User, CheckCircle2, ChevronRight, ChevronLeft, LogOut } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { COMPANIES } from "@/lib/mock-data";
 import { notFound, useParams } from "next/navigation";
+import { ChevronLeft, MapPin, Star, Share2, Heart, ShieldCheck, Clock, Plus, Minus, Check } from "lucide-react";
 
-
+import { Button } from "@/components/ui/button";
+import { COMPANIES } from "@/lib/mock-data";
+import { Badge } from "@/components/ui/badge";
+import { BookingModal } from "./booking-modal";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function BookingPage() {
     const params = useParams();
-    const slug = params.slug as string;
-    const company = COMPANIES[slug];
+    const business = params?.business as string;
+    const company = business ? COMPANIES[business] : null;
 
-    if (!company) {
-        return notFound();
-    }
+    if (!business) return <div>Carregando...</div>;
+    if (!company) return notFound();
 
-    const { services, professionals, timeSlots } = company;
+    const { services } = company;
+    const [selectedServices, setSelectedServices] = useState<number[]>([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const [step, setStep] = useState(1); // Controla o passo atual do wizard
+    const toggleService = (id: number) => {
+        if (selectedServices.includes(id)) {
+            setSelectedServices(prev => prev.filter(s => s !== id));
+        } else {
+            setSelectedServices(prev => [...prev, id]);
+        }
+    };
 
-    const [selectedService, setSelectedService] = useState<number | null>(null);
-    const [selectedProfessional, setSelectedProfessional] = useState<number | null>(null);
-    const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
-    const [selectedTime, setSelectedTime] = useState<string | null>(null);
-
-    // Funções de navegação do wizard
-    const nextStep = () => setStep((prev) => Math.min(prev + 1, 4));
-    const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
-
+    const selectedServiceDetails = services.filter(s => selectedServices.includes(s.id));
+    const totalPrice = selectedServiceDetails.reduce((acc, curr) => {
+        const price = parseFloat(curr.price.replace("R$ ", "").replace(",", "."));
+        return acc + price;
+    }, 0);
 
     return (
-        <div className="min-h-screen bg-zinc-950 text-white font-sans selection:bg-blue-500/30">
-            {/* Texture Overlay */}
-            <div className="fixed inset-0 z-0 pointer-events-none bg-noise opacity-[0.03] mix-blend-overlay" />
+        <div className="min-h-screen bg-slate-50 font-sans pb-20">
 
-            {/* Header Simples */}
-            <header className="relative w-full p-6 flex flex-col items-center justify-center z-20 text-center gap-4">
-                <div className="absolute top-6 right-6">
-                    <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-white uppercase tracking-wider text-xs font-bold" onClick={() => window.location.href = "/login"}>
-                        <LogOut className="mr-2 h-4 w-4" />
-                        Sair
-                    </Button>
+            {/* Header / Hero */}
+            <header className="bg-white">
+                {/* Navigation Bar */}
+                <div className="container mx-auto px-4 h-16 flex items-center justify-between text-sm text-slate-500 dark:text-slate-400">
+                    <div className="flex items-center gap-4">
+                        <Button variant="ghost" size="sm" className="pl-0 hover:bg-transparent hover:text-primary" onClick={() => window.history.back()}>
+                            <ChevronLeft className="h-4 w-4 mr-1" /> Voltar
+                        </Button>
+                        <span>/</span>
+                        <span>{company.category}</span>
+                        <span>/</span>
+                        <span className="text-slate-900 dark:text-slate-100 font-medium">{company.name}</span>
+                    </div>
+                    <ThemeToggle />
                 </div>
 
-                <div className="relative h-16 w-16 rounded-full overflow-hidden border-2 border-zinc-800 shadow-xl">
-                    <Image
-                        src={company.image}
-                        alt={company.name}
-                        fill
-                        className="object-cover"
-                    />
-                </div>
-                <h1 className="font-bold text-xl tracking-[0.2em] uppercase text-white">{company.name}</h1>
-            </header>            <main className="relative z-10 container mx-auto px-4 pt-10 pb-10 max-w-3xl">
-                {/* Progress Bar */}
-                <div className="mb-8">
-                    <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-zinc-300 mb-2">
-                        <span className={cn(step >= 1 && "text-blue-500")}>Serviço</span>
-                        <span className={cn(step >= 2 && "text-blue-500")}>Profissional</span>
-                        <span className={cn(step >= 3 && "text-blue-500")}>Data & Hora</span>
-                        <span className={cn(step >= 4 && "text-blue-500")}>Confirmação</span>
-                    </div>
-                    <div className="h-1 w-full bg-zinc-900 rounded-full overflow-hidden">
-                        <div
-                            className="h-full bg-blue-600 transition-all duration-500 ease-out"
-                            style={{ width: `${(step / 4) * 100}%` }}
-                        />
+                {/* Hero Image */}
+                <div className="container mx-auto px-4 pb-8">
+                    <div className="relative w-full h-64 md:h-80 rounded-3xl overflow-hidden shadow-lg">
+                        <Image src={company.coverImage || company.image} alt={company.name} fill className="object-cover" />
+                        <div className="absolute top-4 right-4 flex gap-2">
+                            <Badge variant="secondary" className="bg-white/90 backdrop-blur text-teal-700 hover:bg-white font-bold gap-1 px-3 py-1.5 rounded-full">
+                                <ShieldCheck className="h-3.5 w-3.5" /> Verificado
+                            </Badge>
+                            <Badge variant="secondary" className="bg-white/90 backdrop-blur text-green-700 hover:bg-white font-bold gap-1 px-3 py-1.5 rounded-full">
+                                <Clock className="h-3.5 w-3.5" /> Aberto agora
+                            </Badge>
+                        </div>
                     </div>
                 </div>
+            </header>
 
-                {/* Step 1: Seleção de Serviços */}
-                {step === 1 && (
+            <main className="container mx-auto px-4 mt-[-40px] relative z-10 grid lg:grid-cols-3 gap-8">
 
-                    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        <div className="text-center space-y-2">
-                            <h1 className="text-2xl font-bold uppercase tracking-widest">Escolha o Serviço</h1>
-                            <p className="text-zinc-300 text-xs uppercase tracking-wider">Selecione o tratamento que você deseja.</p>
-                        </div>
-                        <div className="grid gap-4 sm:grid-cols-2">
-                            {services.map((service) => (
-                                <Card
-                                    key={service.id}
-                                    className={cn(
-                                        "cursor-pointer transition-all duration-200 border-zinc-800 bg-zinc-900/50 hover:bg-zinc-900 backdrop-blur-sm group rounded-sm",
-                                        selectedService === service.id ? "border-blue-500 shadow-[0_0_15px_-3px_rgba(37,99,235,0.3)] ring-1 ring-blue-500/50" : "hover:border-zinc-700"
-                                    )}
-                                    onClick={() => setSelectedService(service.id)}
-                                >
-                                    <CardContent className="flex items-center p-6 gap-4">
-                                        <div className={cn(
-                                            "h-12 w-12 rounded-sm flex items-center justify-center border transition-colors",
-                                            selectedService === service.id ? "bg-blue-600 border-blue-500 text-white" : "bg-zinc-950 border-zinc-800 text-zinc-300 group-hover:text-white"
-                                        )}>
-                                            <service.icon className="h-6 w-6" />
-                                        </div>
-                                        <div>
-                                            <h3 className="font-bold uppercase tracking-wide text-white">{service.name}</h3>
-                                            <div className="flex items-center gap-3 mt-1 text-xs text-zinc-300 uppercase tracking-wider">
-                                                <span>{service.price}</span>
-                                                <span className="w-1 h-1 rounded-full bg-zinc-700" />
-                                                <span>{service.duration}</span>
-                                            </div>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </div>
-                    </div>
-                )}
+                {/* Left Column: Info & services */}
+                <div className="lg:col-span-2 space-y-8">
 
-                {/* Step 2: Seleção de Profissionais */}
-                {step === 2 && (
-
-                    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        <div className="text-center space-y-2">
-                            <h1 className="text-2xl font-bold uppercase tracking-widest">Escolha o Profissional</h1>
-                            <p className="text-zinc-300 text-xs uppercase tracking-wider">Quem vai cuidar do seu estilo hoje?</p>
-                        </div>
-                        <div className="grid gap-4 sm:grid-cols-3">
-                            {professionals.map((pro) => (
-                                <Card
-                                    key={pro.id}
-                                    className={cn(
-                                        "cursor-pointer transition-all duration-200 border-zinc-800 bg-zinc-900/50 hover:bg-zinc-900 backdrop-blur-sm group rounded-sm overflow-hidden",
-                                        selectedProfessional === pro.id ? "border-blue-500 shadow-[0_0_15px_-3px_rgba(37,99,235,0.3)] ring-1 ring-blue-500/50" : "hover:border-zinc-700"
-                                    )}
-                                    onClick={() => setSelectedProfessional(pro.id)}
-                                >
-                                    <div className="aspect-square relative w-full bg-zinc-950 grayscale group-hover:grayscale-0 transition-all duration-500">
-                                        <Image
-                                            src={pro.image}
-                                            alt={pro.name}
-                                            fill
-                                            className="object-cover"
-                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 to-transparent opacity-60" />
-                                    </div>
-                                    <CardContent className="p-4 text-center relative z-10 -mt-10">
-                                        <h3 className="font-bold uppercase tracking-wide text-white text-lg">{pro.name}</h3>
-                                        <p className="text-xs text-blue-400 uppercase tracking-widest font-bold mt-1">{pro.role}</p>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                {/* Step 3: Seleção de Data e Hora */}
-                {step === 3 && (
-
-                    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        <div className="text-center space-y-2">
-                            <h1 className="text-2xl font-bold uppercase tracking-widest">Data e Hora</h1>
-                            <p className="text-zinc-300 text-xs uppercase tracking-wider">Escolha o melhor momento para você.</p>
+                    {/* Business Info Card */}
+                    <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 dark:border-slate-800 relative">
+                        <div className="absolute -top-10 left-8 h-24 w-24 rounded-2xl bg-white dark:bg-slate-800 p-1 shadow-lg">
+                            <div className="relative h-full w-full rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-700">
+                                <Image src={company.image} alt="Logo" fill className="object-cover" />
+                            </div>
                         </div>
 
-                        <div className="grid gap-6 md:grid-cols-2">
-                            {/* Fake Calendar */}
-                            <Card className="bg-zinc-900/50 border-zinc-800 backdrop-blur-sm rounded-sm p-4">
-                                <div className="text-center text-zinc-300 text-sm uppercase tracking-wider py-10 border-2 border-dashed border-zinc-800 rounded-sm">
-                                    <CalendarIcon className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                                    Componente de Calendário
+                        <div className="flex justify-end gap-2 mb-2">
+                            <Button size="icon" variant="outline" className="rounded-full h-10 w-10 border-slate-200 dark:border-slate-700 text-slate-400 hover:text-red-500 dark:bg-slate-800/50">
+                                <Heart className="h-5 w-5" />
+                            </Button>
+                            <Button size="icon" variant="outline" className="rounded-full h-10 w-10 border-slate-200 text-slate-400 hover:text-primary">
+                                <Share2 className="h-5 w-5" />
+                            </Button>
+                        </div>
+
+                        <div className="mt-4">
+                            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">{company.name}</h1>
+                            <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-slate-500 dark:text-slate-400">
+                                <div className="flex items-center gap-1">
+                                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                                    <span className="font-bold text-slate-900 dark:text-white">{company.rating}</span>
+                                    <span>(120 avaliações)</span>
                                 </div>
-                            </Card>
+                                <div className="flex items-center gap-1">
+                                    <MapPin className="h-4 w-4" />
+                                    {company.location}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                            {/* Time Slots */}
-                            <div className="grid grid-cols-3 gap-2 align-start content-start">
-                                {timeSlots.map((time) => (
-                                    <button
-                                        key={time}
-                                        onClick={() => setSelectedTime(time)}
-                                        className={cn(
-                                            "py-2 text-xs font-bold uppercase tracking-wider rounded-sm border transition-all",
-                                            selectedTime === time
-                                                ? "bg-blue-600 text-white border-blue-500"
-                                                : "bg-zinc-900 border-zinc-800 text-zinc-300 hover:bg-zinc-800 hover:border-zinc-700"
-                                        )}
+                    {/* Services Menu */}
+                    <div>
+                        <div className="flex items-center gap-2 mb-6">
+                            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Menu de Serviços</h2>
+                            <div className="h-px flex-1 bg-slate-200 dark:bg-slate-800 mt-1" />
+                        </div>
+
+                        {/* Categories / Filter placeholder */}
+                        <div className="flex gap-2 mb-6">
+                            <Badge variant="outline" className="rounded-full px-4 py-1.5 border-primary bg-primary/5 text-primary cursor-pointer hover:bg-primary/10">Todos</Badge>
+                            <Badge variant="outline" className="rounded-full px-4 py-1.5 border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 cursor-pointer hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">Populares</Badge>
+                            <Badge variant="outline" className="rounded-full px-4 py-1.5 border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 cursor-pointer hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">Pacotes</Badge>
+                        </div>
+
+                        <div className="space-y-4">
+                            {services.map((service) => {
+                                const isSelected = selectedServices.includes(service.id);
+                                return (
+                                    <div
+                                        key={service.id}
+                                        className={`group bg-white dark:bg-slate-900 rounded-2xl p-6 border transition-all duration-300 ${isSelected ? 'border-primary ring-1 ring-primary shadow-md' : 'border-slate-100 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm'}`}
                                     >
-                                        {time}
-                                    </button>
-                                ))}
-                            </div>
+                                        <div className="flex justify-between items-start gap-4">
+                                            <div className="flex-1">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <h3 className="font-bold text-lg text-slate-900 dark:text-white">{service.name}</h3>
+                                                    {isSelected && <Badge className="bg-primary text-white text-[10px] h-5">SELECIONADO</Badge>}
+                                                </div>
+                                                <p className="text-slate-500 dark:text-slate-400 text-sm mb-3">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lavagem inclusa.</p>
+                                                <div className="flex items-center gap-3 text-sm font-medium">
+                                                    <span className="text-slate-900 dark:text-white text-lg font-bold">{service.price}</span>
+                                                    <span className="text-slate-400 flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {service.duration}</span>
+                                                </div>
+                                            </div>
+                                            <Button
+                                                size="icon"
+                                                variant={isSelected ? "default" : "outline"}
+                                                onClick={() => toggleService(service.id)}
+                                                className={`rounded-full h-12 w-12 shrink-0 transition-all ${isSelected ? 'bg-primary hover:bg-teal-700 border-primary' : 'border-slate-200 dark:border-slate-700 hover:border-primary hover:text-primary dark:hover:text-primary dark:text-white dark:bg-slate-800'}`}
+                                            >
+                                                {isSelected ? <Check className="h-6 w-6" /> : <Plus className="h-6 w-6" />}
+                                            </Button>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
-                )}
-
-                {/* Step 4: Confirmação e Resumo */}
-                {step === 4 && (
-
-                    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-md mx-auto">
-                        <div className="text-center space-y-2">
-                            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-500/10 text-blue-500 mb-4 ring-1 ring-blue-500/30">
-                                <CheckCircle2 className="h-8 w-8" />
-                            </div>
-                            <h1 className="text-2xl font-bold uppercase tracking-widest text-white">Confirme o Agendamento</h1>
-                            <p className="text-zinc-300 text-xs uppercase tracking-wider">Verifique os detalhes abaixo.</p>
-                        </div>
-
-                        <Card className="bg-zinc-900/50 border-zinc-800 backdrop-blur-sm rounded-sm overflow-hidden">
-                            <div className="p-6 space-y-4">
-                                <div className="flex justify-between items-center border-b border-zinc-800 pb-4">
-                                    <span className="text-xs uppercase tracking-widest text-zinc-300">Serviço</span>
-                                    <span className="text-sm font-bold text-white uppercase tracking-wide">Corte de Cabelo</span>
-                                </div>
-                                <div className="flex justify-between items-center border-b border-zinc-800 pb-4">
-                                    <span className="text-xs uppercase tracking-widest text-zinc-300">Profissional</span>
-                                    <span className="text-sm font-bold text-white uppercase tracking-wide">Barbeiro João</span>
-                                </div>
-                                <div className="flex justify-between items-center border-b border-zinc-800 pb-4">
-                                    <span className="text-xs uppercase tracking-widest text-zinc-300">Data</span>
-                                    <span className="text-sm font-bold text-white uppercase tracking-wide">12/03/2026</span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-xs uppercase tracking-widest text-zinc-300">Horário</span>
-                                    <span className="text-sm font-bold text-white uppercase tracking-wide">14:00</span>
-                                </div>
-                            </div>
-                            <div className="bg-zinc-900 px-6 py-4 flex justify-between items-center border-t border-zinc-800">
-                                <span className="text-xs uppercase tracking-widest text-zinc-300">Total</span>
-                                <span className="text-xl font-bold text-blue-500 tracking-tight">R$ 50,00</span>
-                            </div>
-                        </Card>
-                    </div>
-                )}
-
-                {/* Navigation Buttons */}
-                <div className="mt-10 flex justify-between">
-                    {step > 1 && (
-                        <Button
-                            variant="outline"
-                            onClick={prevStep}
-                            className="border-zinc-800 text-zinc-300 hover:bg-zinc-900 hover:text-white uppercase tracking-wider text-xs font-bold h-10 px-6 rounded-sm bg-black/20"
-                        >
-                            <ChevronLeft className="mr-2 h-4 w-4" />
-                            Voltar
-                        </Button>
-                    )}
-
-                    {step < 4 ? (
-                        <Button
-                            onClick={nextStep}
-                            disabled={
-                                (step === 1 && !selectedService) ||
-                                (step === 2 && !selectedProfessional) ||
-                                (step === 3 && !selectedTime)
-                            }
-                            className="ml-auto bg-blue-600 hover:bg-blue-500 text-white uppercase tracking-wider text-xs font-bold h-10 px-8 rounded-sm shadow-[0_0_15px_-3px_rgba(37,99,235,0.4)]"
-                        >
-                            Próximo
-                            <ChevronRight className="ml-2 h-4 w-4" />
-                        </Button>
-                    ) : (
-                        <Button
-                            onClick={() => alert("Agendamento Confirmado!")}
-                            className="ml-auto w-full sm:w-auto bg-green-600 hover:bg-green-500 text-white uppercase tracking-wider text-xs font-bold h-10 px-8 rounded-sm shadow-[0_0_15px_-3px_rgba(22,163,74,0.4)]"
-                        >
-                            Confirmar Agendamento
-                        </Button>
-                    )}
                 </div>
-                {/* Google Maps Widget e Endereço */}
-                {company.mapUrl && (
-                    <div className="w-full h-48 mt-12 rounded-sm overflow-hidden border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm grayscale hover:grayscale-0 transition-all duration-500">
-                        <iframe
-                            src={company.mapUrl}
-                            width="100%"
-                            height="100%"
-                            style={{ border: 0 }}
-                            allowFullScreen
-                            loading="lazy"
-                            referrerPolicy="no-referrer-when-downgrade"
-                            title={`Mapa de ${company.name}`}
-                        />
+
+                {/* Right Column: Sticky Summary */}
+                <div className="relative">
+                    <div className="sticky top-24 space-y-6">
+                        {/* Summary Widget */}
+                        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-lg">
+                            <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-4">Resumo do Agendamento</h3>
+
+                            {selectedServiceDetails.length > 0 ? (
+                                <div className="space-y-4">
+                                    <div className="space-y-2">
+                                        {selectedServiceDetails.map(s => (
+                                            <div key={s.id} className="flex justify-between text-sm">
+                                                <span className="text-slate-600 dark:text-slate-400">{s.name}</span>
+                                                <span className="font-bold text-slate-900 dark:text-white">{s.price}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className="border-t border-slate-100 dark:border-slate-800 pt-4 flex justify-between items-center">
+                                        <div>
+                                            <p className="text-xs text-slate-400 uppercase font-bold">Total Estimado</p>
+                                            <p className="text-2xl font-bold text-primary">R$ {totalPrice.toFixed(2).replace('.', ',')}</p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-xs text-slate-400 uppercase font-bold">Duração</p>
+                                            <p className="text-sm font-bold text-slate-700 dark:text-slate-300">~ 45 min</p>
+                                        </div>
+                                    </div>
+
+                                    <Button
+                                        onClick={() => setIsModalOpen(true)}
+                                        className="w-full h-12 rounded-full font-bold text-lg bg-primary hover:bg-teal-700 shadow-lg shadow-primary/20"
+                                    >
+                                        ESCOLHER HORÁRIO
+                                    </Button>
+                                    <p className="text-xs text-center text-slate-400">Cancelamento grátis até 2 horas antes.</p>
+                                </div>
+                            ) : (
+                                <div className="py-8 text-center text-slate-400">
+                                    <p>Nenhum serviço selecionado.</p>
+                                    <p className="text-xs mt-1">Selecione um serviço ao lado para continuar.</p>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Location Map Widget */}
+                        <div className="bg-emerald-100/50 rounded-3xl p-1 border border-emerald-100 overflow-hidden h-64 relative group cursor-pointer">
+                            <Image
+                                src="https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?q=80&w=1931&auto=format&fit=crop"
+                                alt="Map"
+                                fill
+                                className="object-cover opacity-60 grayscale group-hover:grayscale-0 transition-all duration-500"
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <Button variant="secondary" className="bg-white text-slate-900 hover:bg-primary hover:text-white font-bold shadow-lg gap-2">
+                                    <MapPin className="h-4 w-4" /> Ver no mapa
+                                </Button>
+                            </div>
+                        </div>
+
                     </div>
-                )}
+                </div>
+
             </main>
+
+            {/* Modal */}
+            <BookingModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                services={selectedServiceDetails}
+                totalPrice={totalPrice}
+                companyName={company.name}
+            />
         </div>
     );
 }

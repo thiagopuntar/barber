@@ -1,27 +1,91 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
+@theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
 }
 
-/* Dark mode preferences can be managed by a theme provider later if needed */
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #f8fafc;
+    /* Slate 50 - More premium off-white */
+    --foreground: #0f172a;
+    /* Slate 900 - Sharper contrast */
+    --primary: #0d9488;
+    --primary-foreground: #ffffff;
+    --secondary: #ccfbf1;
+    --secondary-foreground: #0f766e;
+    --muted: #f1f5f9;
+    --muted-foreground: #64748b;
+    --accent: #99f6e4;
+    --accent-foreground: #115e59;
+    --border: #e2e8f0;
+    --input: #e2e8f0;
+    --ring: #0d9488;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: #0f172a;
+    --foreground: #f8fafc;
+    --primary: #14b8a6;
+    --primary-foreground: #ffffff;
+    --secondary: #134e4a;
+    --secondary-foreground: #ccfbf1;
+    --muted: #1e293b;
+    --muted-foreground: #94a3b8;
+    --accent: #115e59;
+    --accent-foreground: #ccfbf1;
+    --border: #334155;
+    --input: #334155;
+    --ring: #14b8a6;
   }
 }
 
 body {
   @apply bg-background text-foreground antialiased;
+  /* Subtle Dot Pattern for Light Mode */
+  background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+  background-size: 32px 32px;
 }
 
-@utility bg-noise {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+/* Hide pattern in dark mode */
+.dark body {
+  background-image: none;
+}
+
+@layer utilities {
+  /* Sombra premium alinhada à cor primária teal */
+  .shadow-premium {
+    box-shadow: 0 10px 40px -10px rgba(13, 148, 136, 0.15);
+  }
+
+  /* Remove o padrão de pontos nas páginas auth (fundo branco puro) */
+  .auth-bg {
+    background-image: none;
+    background-color: #ffffff;
+  }
+
+  /* Divisor "ou continue com" dos formulários auth */
+  .auth-divider {
+    @apply relative;
+  }
+  .auth-divider::before {
+    content: "";
+    @apply absolute inset-0 flex items-center border-t border-slate-200;
+  }
 }

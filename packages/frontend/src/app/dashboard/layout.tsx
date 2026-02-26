@@ -16,7 +16,7 @@ export default function DashboardLayout({
 }) {
 
     return (
-        <div className="flex min-h-screen bg-zinc-950">
+        <div className="flex min-h-screen bg-muted/40 dark:bg-zinc-950">
             {/* Background Texture */}
             <div className="fixed inset-0 z-0 pointer-events-none bg-noise opacity-[0.03] mix-blend-overlay" />
 
@@ -29,7 +29,7 @@ export default function DashboardLayout({
                 <Header />
 
                 {/* Área de Conteúdo Scrollável */}
-                <main className="flex-1 p-4 md:p-8 overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
+                <main className="flex-1 p-4 md:p-8 overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent text-foreground">
                     {children}
                 </main>
             </div>

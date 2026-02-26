@@ -20,6 +20,10 @@ const buttonVariants = cva(
                     "bg-secondary text-secondary-foreground hover:bg-secondary/80",
                 ghost: "hover:bg-accent hover:text-accent-foreground",
                 link: "text-primary underline-offset-4 hover:underline",
+                // Auth pages — full-width pill primary button
+                auth: "w-full h-12 rounded-full bg-primary hover:bg-teal-700 text-white font-bold text-lg shadow-lg shadow-primary/20 transition-all",
+                // Auth pages — pill outline for social/secondary actions
+                "outline-auth": "rounded-full border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 gap-2 transition-colors",
             },
             size: {
                 default: "h-10 px-4 py-2",
