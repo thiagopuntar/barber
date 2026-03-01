@@ -2,6 +2,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { EmployeeRepository } from "../repositories/EmployeeRepository";
 import AppointmentRepository from "../repositories/AppointmentRepository";
 import ServiceRepository from "../repositories/ServiceRepository";
+import { GetAvailabilityUseCase } from "../use-cases/GetAvailabilityUseCase";
 import { GetAvailabilityPerSlotUseCase } from "../use-cases/GetAvailabilityPerSlotUseCase";
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
