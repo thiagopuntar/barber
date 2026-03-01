@@ -26,9 +26,7 @@
   "paths": {
     "/{businessId}": {
       "get": {
-        "tags": [
-          "Business"
-        ],
+        "tags": ["Business"],
         "operationId": "getBusiness",
         "parameters": [
           {
@@ -92,9 +90,7 @@
     },
     "/{businessId}/services": {
       "get": {
-        "tags": [
-          "Services"
-        ],
+        "tags": ["Services"],
         "operationId": "getServices",
         "parameters": [
           {
@@ -148,9 +144,7 @@
     },
     "/{businessId}/employees": {
       "get": {
-        "tags": [
-          "Employees"
-        ],
+        "tags": ["Employees"],
         "operationId": "getEmployees",
         "parameters": [
           {
@@ -204,9 +198,7 @@
     },
     "/{businessId}/availability/services/{serviceId}/employees/{employeeId}": {
       "get": {
-        "tags": [
-          "Availability"
-        ],
+        "tags": ["Availability"],
         "operationId": "getEmployeeAvailability",
         "parameters": [
           {
@@ -294,9 +286,7 @@
     },
     "/{businessId}/availability/services/{serviceId}": {
       "get": {
-        "tags": [
-          "Availability"
-        ],
+        "tags": ["Availability"],
         "operationId": "getAvailability",
         "parameters": [
           {
@@ -379,10 +369,7 @@
     "schemas": {
       "ServicesResponse": {
         "title": "ServicesResponse",
-        "required": [
-          "businessId",
-          "services"
-        ],
+        "required": ["businessId", "services"],
         "type": "object",
         "properties": {
           "businessId": {
@@ -391,12 +378,7 @@
           "services": {
             "type": "array",
             "items": {
-              "required": [
-                "duration",
-                "id",
-                "name",
-                "price"
-              ],
+              "required": ["duration", "id", "name", "price"],
               "type": "object",
               "properties": {
                 "duration": {
@@ -429,10 +411,7 @@
       },
       "EmployeesResponse": {
         "title": "EmployeesResponse",
-        "required": [
-          "businessId",
-          "employees"
-        ],
+        "required": ["businessId", "employees"],
         "type": "object",
         "properties": {
           "businessId": {
@@ -448,19 +427,13 @@
       },
       "AvailabilityResponse": {
         "title": "AvailabilityResponse",
-        "required": [
-          "businessId",
-          "freeSlots"
-        ],
+        "required": ["businessId", "freeSlots"],
         "type": "object",
         "properties": {
           "freeSlots": {
             "type": "array",
             "items": {
-              "required": [
-                "date",
-                "slots"
-              ],
+              "required": ["date", "slots"],
               "type": "object",
               "properties": {
                 "date": {
@@ -470,10 +443,7 @@
                 "slots": {
                   "type": "array",
                   "items": {
-                    "required": [
-                      "end",
-                      "start"
-                    ],
+                    "required": ["end", "start"],
                     "type": "object",
                     "properties": {
                       "start": {
@@ -495,19 +465,13 @@
       },
       "AvailabilityPerSlotResponse": {
         "title": "AvailabilityPerSlotResponse",
-        "required": [
-          "businessId",
-          "freeSlots"
-        ],
+        "required": ["businessId", "freeSlots"],
         "type": "object",
         "properties": {
           "freeSlots": {
             "type": "array",
             "items": {
-              "required": [
-                "date",
-                "slots"
-              ],
+              "required": ["date", "slots"],
               "type": "object",
               "properties": {
                 "date": {
@@ -517,11 +481,7 @@
                 "slots": {
                   "type": "array",
                   "items": {
-                    "required": [
-                      "end",
-                      "start",
-                      "employees"
-                    ],
+                    "required": ["end", "start", "employees"],
                     "type": "object",
                     "properties": {
                       "start": {
@@ -548,10 +508,7 @@
         }
       },
       "Employee": {
-        "required": [
-          "id",
-          "name"
-        ],
+        "required": ["id", "name"],
         "type": "object",
         "properties": {
           "createdAt": {
@@ -567,10 +524,7 @@
           "availability": {
             "type": "array",
             "items": {
-              "required": [
-                "range",
-                "weekDay"
-              ],
+              "required": ["range", "weekDay"],
               "type": "object",
               "properties": {
                 "weekDay": {
@@ -579,10 +533,7 @@
                 "range": {
                   "type": "array",
                   "items": {
-                    "required": [
-                      "end",
-                      "start"
-                    ],
+                    "required": ["end", "start"],
                     "type": "object",
                     "properties": {
                       "start": {
@@ -605,9 +556,7 @@
       },
       "ErrorResponse": {
         "title": "ErrorResponse",
-        "required": [
-          "error"
-        ],
+        "required": ["error"],
         "type": "object",
         "properties": {
           "error": {
@@ -617,9 +566,7 @@
       },
       "BusinessResponse": {
         "title": "BusinessResponse",
-        "required": [
-          "business"
-        ],
+        "required": ["business"],
         "type": "object",
         "properties": {
           "business": {

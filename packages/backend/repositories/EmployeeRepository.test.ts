@@ -247,7 +247,9 @@ describe("EmployeeRepository", () => {
       mockSend.mockRejectedValue(mockError);
 
       // Act & Assert
-      await expect(repository.getEmployee(businessId, employeeId)).rejects.toThrow("DynamoDB error");
+      await expect(repository.getEmployee(businessId, employeeId)).rejects.toThrow(
+        "DynamoDB error"
+      );
 
       expect(mockSend).toHaveBeenCalledTimes(1);
     });

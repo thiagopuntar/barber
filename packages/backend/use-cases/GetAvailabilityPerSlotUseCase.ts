@@ -21,7 +21,10 @@ export class GetAvailabilityPerSlotUseCase {
     const service = await this.serviceRepository.getServiceById(businessId, serviceId);
 
     const result: SlotPerDayAndEmployee[] = [];
-    const dateToSlotsMap: Map<string, Map<string, { start: string; end: string; employees: any[] }>> = new Map();
+    const dateToSlotsMap: Map<
+      string,
+      Map<string, { start: string; end: string; employees: any[] }>
+    > = new Map();
 
     for (const employee of employees) {
       const availability = await this.getAvailabilityUseCase.getAvailability({
@@ -51,7 +54,9 @@ export class GetAvailabilityPerSlotUseCase {
 
     // Convert map to final response format
     for (const [dateStr, slotsMap] of dateToSlotsMap.entries()) {
-      const sortedSlots = Array.from(slotsMap.values()).sort((a, b) => a.start.localeCompare(b.start));
+      const sortedSlots = Array.from(slotsMap.values()).sort((a, b) =>
+        a.start.localeCompare(b.start)
+      );
       result.push({
         date: new Date(dateStr),
         slots: sortedSlots,
