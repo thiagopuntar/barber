@@ -8,6 +8,7 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
+    "lint": "npm run format:check",
     "cdk": "cdk",
     "seed": "ts-node scripts/seed-data.ts",
     "format": "prettier --write \"**/*.{js,ts,json,md}\"",
