@@ -1,5 +1,4 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBDocumentClient, GetCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import Employee from "../models/Employee";
 import { EmployeeRepository } from "./EmployeeRepository";
 
@@ -11,6 +10,7 @@ const mockedDynamoDBDocumentClient = DynamoDBDocumentClient as jest.Mocked<
   typeof DynamoDBDocumentClient
 >;
 const mockedQueryCommand = QueryCommand as jest.MockedClass<typeof QueryCommand>;
+const mockedGetCommand = GetCommand as jest.MockedClass<typeof GetCommand>;
 
 describe("EmployeeRepository", () => {
   let repository: EmployeeRepository;
@@ -181,6 +181,75 @@ describe("EmployeeRepository", () => {
       expect(employee.name).toBe("Test Employee");
       expect(employee.createdAt).toEqual(new Date("2024-01-15T10:30:00Z"));
       expect(employee.updatedAt).toEqual(new Date("2024-01-16T14:45:00Z"));
+    });
+  });
+
+  describe("getEmployee", () => {
+    const businessId = "business-123";
+    const employeeId = "emp-123";
+
+    it("should successfully retrieve and map an employee", async () => {
+      // Arrange
+      const mockDynamoItem = {
+        pk: "business-123#employee",
+        sk: "emp-123",
+        name: "John Doe",
+        availability: [
+          {
+            weekDay: 1,
+            range: [{ start: "09:00", end: "17:00" }],
+          },
+        ],
+        createdAt: "2023-01-01T00:00:00Z",
+        updatedAt: "2023-01-02T00:00:00Z",
+      };
+
+      mockSend.mockResolvedValue({ Item: mockDynamoItem });
+
+      // Act
+      const result = await repository.getEmployee(businessId, employeeId);
+
+      // Assert
+      expect(mockSend).toHaveBeenCalledTimes(1);
+      expect(mockSend).toHaveBeenCalledWith(expect.any(GetCommand));
+
+      expect(mockedGetCommand).toHaveBeenCalledWith({
+        TableName: tableName,
+        Key: {
+          pk: "business-123#employee",
+          sk: employeeId,
+        },
+      });
+
+      expect(result).toBeInstanceOf(Employee);
+      expect(result.id).toBe(employeeId);
+      expect(result.name).toBe("John Doe");
+      expect(result.availability).toEqual(mockDynamoItem.availability);
+      expect(result.createdAt).toEqual(new Date(mockDynamoItem.createdAt));
+      expect(result.updatedAt).toEqual(new Date(mockDynamoItem.updatedAt));
+    });
+
+    it("should throw an error when employee is not found", async () => {
+      // Arrange
+      mockSend.mockResolvedValue({ Item: undefined });
+
+      // Act & Assert
+      await expect(repository.getEmployee(businessId, employeeId)).rejects.toThrow(
+        "Employee not found"
+      );
+
+      expect(mockSend).toHaveBeenCalledTimes(1);
+    });
+
+    it("should handle DynamoDB errors properly", async () => {
+      // Arrange
+      const mockError = new Error("DynamoDB error");
+      mockSend.mockRejectedValue(mockError);
+
+      // Act & Assert
+      await expect(repository.getEmployee(businessId, employeeId)).rejects.toThrow("DynamoDB error");
+
+      expect(mockSend).toHaveBeenCalledTimes(1);
     });
   });
 });

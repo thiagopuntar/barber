@@ -2,7 +2,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { EmployeeRepository } from "../repositories/EmployeeRepository";
 import AppointmentRepository from "../repositories/AppointmentRepository";
 import ServiceRepository from "../repositories/ServiceRepository";
-import { SlotPerDay } from "../models/Employee";
+import { GetAvailabilityUseCase } from "../use-cases/GetAvailabilityUseCase";
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
@@ -32,29 +32,31 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       throw new Error("APPOINTMENT_TABLE_NAME environment variable is not set");
     }
 
-    // Initialize repository and fetch services
+    // Initialize repositories
     const employeeRepository = new EmployeeRepository(tableName);
-    const employee = await employeeRepository.getEmployee(businessId, employeeId);
-
     const serviceRepository = new ServiceRepository(tableName);
-    const service = await serviceRepository.getServiceById(businessId, serviceId);
-
     const appointmentRepository = new AppointmentRepository(tableName);
-    const initialDate = new Date(event.queryStringParameters?.initialDate as string) || new Date();
-    const finalDate = new Date(event.queryStringParameters?.finalDate as string) || new Date();
 
-    const freeSlots: SlotPerDay[] = [];
+    // Initialize use case
+    const getAvailabilityUseCase = new GetAvailabilityUseCase(
+      employeeRepository,
+      serviceRepository,
+      appointmentRepository
+    );
 
-    for (let date = initialDate; date <= finalDate; date.setDate(date.getDate() + 1)) {
-      const appointments = await appointmentRepository.getAppointmentsByEmployeeIdAndDate(
-        businessId,
-        employeeId,
-        date
-      );
-      employee.addAppointments(appointments);
-      const slots = employee.getSlotPerDay(date, service.duration);
-      freeSlots.push(...slots);
-    }
+    const initialDateStr = event.queryStringParameters?.initialDate;
+    const finalDateStr = event.queryStringParameters?.finalDate;
+
+    const initialDate = initialDateStr ? new Date(initialDateStr) : new Date();
+    const finalDate = finalDateStr ? new Date(finalDateStr) : new Date();
+
+    const freeSlots = await getAvailabilityUseCase.execute({
+      businessId,
+      serviceId,
+      employeeId,
+      initialDate,
+      finalDate,
+    });
 
     return {
       statusCode: 200,

@@ -19,7 +19,6 @@ export class EmployeeRepository implements IEmployeeRepository {
   async getEmployeesByBusinessId(businessId: string): Promise<Employee[]> {
     try {
       const pk = this.getPk(businessId);
-      console.debug("pk", pk);
 
       const command = new QueryCommand({
         TableName: this.tableName,
@@ -71,6 +70,7 @@ export class EmployeeRepository implements IEmployeeRepository {
       employee.name = result.Item.name as string;
       employee.createdAt = new Date(result.Item.createdAt as string);
       employee.updatedAt = new Date(result.Item.updatedAt as string);
+      employee.availability = result.Item.availability as Availability[];
       return employee;
     } catch (error) {
       console.error("Error fetching employee from DynamoDB:", error);
