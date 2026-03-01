@@ -55,11 +55,7 @@ export class AuthConstruct extends Construct {
         flows: {
           authorizationCodeGrant: true,
         },
-        scopes: [
-          cognito.OAuthScope.OPENID,
-          cognito.OAuthScope.EMAIL,
-          cognito.OAuthScope.PROFILE,
-        ],
+        scopes: [cognito.OAuthScope.OPENID, cognito.OAuthScope.EMAIL, cognito.OAuthScope.PROFILE],
         callbackUrls: ["http://localhost:3000/api/auth/callback/cognito"],
         logoutUrls: ["http://localhost:3000"],
       },

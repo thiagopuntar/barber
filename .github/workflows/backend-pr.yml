@@ -1,0 +1,42 @@
+name: Backend PR Checks
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'packages/backend/**'
+      - '.github/workflows/backend-pr.yml'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/backend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: packages/backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: CDK synth
+        run: npx cdk synth
+
+      - name: Run tests
+        run: npm test

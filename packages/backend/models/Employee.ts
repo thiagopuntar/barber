@@ -16,6 +16,15 @@ export type SlotPerDay = {
   }>;
 };
 
+export type SlotPerDayAndEmployee = {
+  date: Date;
+  slots: Array<{
+    start: string;
+    end: string;
+    employees: Employee[];
+  }>;
+};
+
 class Employee {
   id: string;
   name: string;

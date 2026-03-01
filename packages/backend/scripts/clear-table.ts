@@ -1,11 +1,7 @@
 #!/usr/bin/env ts-node
 
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import {
-  DynamoDBDocumentClient,
-  ScanCommand,
-  BatchWriteCommand,
-} from "@aws-sdk/lib-dynamodb";
+import { DynamoDBDocumentClient, ScanCommand, BatchWriteCommand } from "@aws-sdk/lib-dynamodb";
 
 async function clearTable(tableName: string) {
   const client = new DynamoDBClient({
@@ -37,7 +33,7 @@ async function clearTable(tableName: string) {
       // 2. Batch delete items in chunks of 25
       for (let i = 0; i < items.length; i += 25) {
         const chunk = items.slice(i, i + 25);
-        const deleteRequests = chunk.map((item) => ({
+        const deleteRequests = chunk.map(item => ({
           DeleteRequest: {
             Key: {
               pk: item.pk,
@@ -69,7 +65,7 @@ async function clearTable(tableName: string) {
 
 async function main() {
   const tableName = process.env.APPOINTMENT_TABLE_NAME || "AppointmentTable";
-  
+
   // Optional: check for table name in arguments
   const args = process.argv.slice(2);
   const targetTable = args[0] || tableName;

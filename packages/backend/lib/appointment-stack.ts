@@ -10,6 +10,7 @@ import { EmployeesConstruct } from "./employees-construct";
 import { AvailabilityConstruct } from "./availability-construct";
 import { BusinessConstruct } from "./business-construct";
 import { AuthConstruct } from "./auth-construct";
+import { AvailabilityPerSlotConstruct } from "./availability-per-slot-construct";
 import { IAPIRestLambdaConstruct } from "./api-rest-lambda-construct";
 import { DocsConstruct } from "./docs-construct";
 
@@ -51,20 +52,24 @@ export class AppointmentStack extends cdk.Stack {
       table: appointmentTable,
     });
 
+    const availabilityPerSlotConstruct = new AvailabilityPerSlotConstruct(
+      this,
+      "AvailabilityPerSlotConstruct",
+      {
+        table: appointmentTable,
+      }
+    );
+
     const apiRestLambdaConstructs: IAPIRestLambdaConstruct[] = [
       servicesConstruct,
       employeesConstruct,
       availabilityConstruct,
       businessConstruct,
+      availabilityPerSlotConstruct,
     ];
 
-    const openApiTemplate = fs.readFileSync(
-      path.join(__dirname, "../openapi.json"),
-      "utf8"
-    );
-    let openApiWithSubstitutions = openApiTemplate
-      .split("${AWS::Region}")
-      .join(cdk.Aws.REGION);
+    const openApiTemplate = fs.readFileSync(path.join(__dirname, "../openapi.json"), "utf8");
+    let openApiWithSubstitutions = openApiTemplate.split("${AWS::Region}").join(cdk.Aws.REGION);
     for (const apiRestLambdaConstruct of apiRestLambdaConstructs) {
       openApiWithSubstitutions = openApiWithSubstitutions
         .split(`\${${apiRestLambdaConstruct.lambdaName}}`)
