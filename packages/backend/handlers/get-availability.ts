@@ -4,6 +4,7 @@ import AppointmentRepository from "../repositories/AppointmentRepository";
 import ServiceRepository from "../repositories/ServiceRepository";
 import { GetAvailabilityUseCase } from "../use-cases/GetAvailabilityUseCase";
 import { GetAvailabilityPerSlotUseCase } from "../use-cases/GetAvailabilityPerSlotUseCase";
+import { Logger } from "../utils/Logger";
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
@@ -77,7 +78,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       }),
     };
   } catch (error) {
-    console.error("Error getting availability:", error);
+    Logger.error("Error getting availability:", error);
 
     return {
       statusCode: 500,

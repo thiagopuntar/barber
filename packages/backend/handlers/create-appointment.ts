@@ -1,12 +1,12 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import { BusinessRepository } from "../repositories/BusinessRepository";
+import { v4 as uuidv4 } from "uuid";
 import { Logger } from "../utils/Logger";
 
 const headers = {
   "Content-Type": "application/json",
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "Content-Type",
-  "Access-Control-Allow-Methods": "GET, OPTIONS",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
@@ -23,33 +23,34 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       };
     }
 
-    const tableName = process.env.APPOINTMENT_TABLE_NAME;
-    if (!tableName) {
-      throw new Error("APPOINTMENT_TABLE_NAME environment variable is not set");
-    }
-
-    const businessRepository = new BusinessRepository(tableName);
-    const business = await businessRepository.getBusinessById(businessId);
-
-    if (!business) {
+    if (!event.body) {
       return {
-        statusCode: 404,
+        statusCode: 400,
         headers,
         body: JSON.stringify({
-          error: "Business not found",
+          error: "Body is required",
         }),
       };
     }
 
+    // Dummy logic for now
+    const appointmentId = uuidv4();
+
+    // Access Cognito user information
+    const userEmail = event.requestContext.authorizer?.claims?.email;
+    const userId = event.requestContext.authorizer?.claims?.sub;
+
+    Logger.info(`Creating appointment for user: (${userId})`);
+
     return {
-      statusCode: 200,
+      statusCode: 201,
       headers,
       body: JSON.stringify({
-        business,
+        appointmentId,
       }),
     };
   } catch (error) {
-    Logger.error("Error getting business:", error);
+    Logger.error("Error creating appointment:", error);
 
     return {
       statusCode: 500,

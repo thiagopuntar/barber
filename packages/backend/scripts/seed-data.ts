@@ -2,6 +2,7 @@
 
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { Logger } from "../utils/Logger";
 
 interface ServiceData {
   pk: string;
@@ -171,10 +172,10 @@ async function seedData(businessId: string, numServices: number, numEmployees: n
 
   const tableName = process.env.APPOINTMENT_TABLE_NAME || "AppointmentTable";
 
-  console.log(`Seeding data for business: ${businessId}`);
-  console.log(`Table: ${tableName}`);
-  console.log(`Services to create: ${numServices}`);
-  console.log(`Employees to create: ${numEmployees}`);
+  Logger.info(`Seeding data for business: ${businessId}`);
+  Logger.info(`Table: ${tableName}`);
+  Logger.info(`Services to create: ${numServices}`);
+  Logger.info(`Employees to create: ${numEmployees}`);
 
   const client = new DynamoDBClient({
     region: "us-east-1",
@@ -183,17 +184,17 @@ async function seedData(businessId: string, numServices: number, numEmployees: n
 
   try {
     // Seed business
-    console.log("\nSeeding business...");
+    Logger.info("\nSeeding business...");
     const business = await generateBusiness(businessId);
     const businessCommand = new PutCommand({
       TableName: tableName,
       Item: business,
     });
     await dynamoClient.send(businessCommand);
-    console.log(`✓ Created business: ${business.name} (ID: ${business.sk})`);
+    Logger.info(`✓ Created business: ${business.name} (ID: ${business.sk})`);
 
     // Seed services
-    console.log("\nSeeding services...");
+    Logger.info("\nSeeding services...");
     for (let i = 0; i < numServices; i++) {
       const service = await generateService(businessId, i);
       const command = new PutCommand({
@@ -202,11 +203,11 @@ async function seedData(businessId: string, numServices: number, numEmployees: n
       });
 
       await dynamoClient.send(command);
-      console.log(`✓ Created service: ${service.name} (ID: ${service.sk})`);
+      Logger.info(`✓ Created service: ${service.name} (ID: ${service.sk})`);
     }
 
     // Seed employees
-    console.log("\nSeeding employees...");
+    Logger.info("\nSeeding employees...");
     for (let i = 0; i < numEmployees; i++) {
       const employee = await generateEmployee(businessId, i);
       const command = new PutCommand({
@@ -215,15 +216,15 @@ async function seedData(businessId: string, numServices: number, numEmployees: n
       });
 
       await dynamoClient.send(command);
-      console.log(`✓ Created employee: ${employee.name} (ID: ${employee.sk})`);
+      Logger.info(`✓ Created employee: ${employee.name} (ID: ${employee.sk})`);
     }
 
-    console.log("\n✅ Seeding completed successfully!");
-    console.log(
+    Logger.info("\n✅ Seeding completed successfully!");
+    Logger.info(
       `Created ${numServices} services and ${numEmployees} employees for business ${businessId}`
     );
   } catch (error) {
-    console.error("❌ Error seeding data:", error);
+    Logger.error("❌ Error seeding data:", error);
     throw error;
   }
 }
@@ -233,8 +234,8 @@ function parseArgs() {
   const args = process.argv.slice(2);
 
   if (args.length < 3) {
-    console.error("Usage: ts-node seed-data.ts <businessId> <numServices> <numEmployees>");
-    console.error("Example: ts-node seed-data.ts business123 5 3");
+    Logger.error("Usage: ts-node seed-data.ts <businessId> <numServices> <numEmployees>");
+    Logger.error("Example: ts-node seed-data.ts business123 5 3");
     process.exit(1);
   }
 
@@ -243,7 +244,7 @@ function parseArgs() {
   const numEmployees = parseInt(args[2], 10);
 
   if (isNaN(numServices) || isNaN(numEmployees)) {
-    console.error("numServices and numEmployees must be valid numbers");
+    Logger.error("numServices and numEmployees must be valid numbers");
     process.exit(1);
   }
 
@@ -256,7 +257,7 @@ async function main() {
     const { businessId, numServices, numEmployees } = parseArgs();
     await seedData(businessId, numServices, numEmployees);
   } catch (error) {
-    console.error("Failed to seed data:", error);
+    Logger.error("Failed to seed data:", error);
     process.exit(1);
   }
 }

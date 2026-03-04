@@ -2,6 +2,7 @@
 
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, ScanCommand, BatchWriteCommand } from "@aws-sdk/lib-dynamodb";
+import { Logger } from "../utils/Logger";
 
 async function clearTable(tableName: string) {
   const client = new DynamoDBClient({
@@ -9,7 +10,7 @@ async function clearTable(tableName: string) {
   });
   const dynamoClient = DynamoDBDocumentClient.from(client);
 
-  console.log(`🧹 Clearing table: ${tableName}`);
+  Logger.info(`🧹 Clearing table: ${tableName}`);
 
   try {
     let lastEvaluatedKey: Record<string, any> | undefined = undefined;
@@ -56,9 +57,9 @@ async function clearTable(tableName: string) {
       lastEvaluatedKey = scanResult.LastEvaluatedKey;
     } while (lastEvaluatedKey);
 
-    console.log(`\n✅ Successfully cleared ${totalDeleted} items from ${tableName}`);
+    Logger.info(`\n✅ Successfully cleared ${totalDeleted} items from ${tableName}`);
   } catch (error) {
-    console.error(`\n❌ Error clearing table ${tableName}:`, error);
+    Logger.error(`\n❌ Error clearing table ${tableName}:`, error);
     throw error;
   }
 }

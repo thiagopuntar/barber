@@ -2,6 +2,7 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import Employee, { Availability } from "../models/Employee";
 import { DynamoDBDocumentClient, GetCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { IEmployeeRepository } from "./IEmployeeRepository";
+import { Logger } from "../utils/Logger";
 
 export class EmployeeRepository implements IEmployeeRepository {
   private dynamoClient: DynamoDBDocumentClient;
@@ -44,7 +45,7 @@ export class EmployeeRepository implements IEmployeeRepository {
         return employee;
       });
     } catch (error) {
-      console.error("Error fetching employees from DynamoDB:", error);
+      Logger.error("Error fetching employees from DynamoDB:", error);
       throw error;
     }
   }
@@ -73,7 +74,7 @@ export class EmployeeRepository implements IEmployeeRepository {
       employee.availability = result.Item.availability as Availability[];
       return employee;
     } catch (error) {
-      console.error("Error fetching employee from DynamoDB:", error);
+      Logger.error("Error fetching employee from DynamoDB:", error);
       throw error;
     }
   }

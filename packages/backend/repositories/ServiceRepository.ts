@@ -2,6 +2,7 @@ import IServiceRepository from "./IServiceRepository";
 import Service from "../models/Service";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { Logger } from "../utils/Logger";
 
 class ServiceRepository implements IServiceRepository {
   private dynamoClient: DynamoDBDocumentClient;
@@ -44,7 +45,7 @@ class ServiceRepository implements IServiceRepository {
 
       return service;
     } catch (error) {
-      console.error("Error fetching service from DynamoDB:", error);
+      Logger.error("Error fetching service from DynamoDB:", error);
       throw error;
     }
   }
@@ -52,7 +53,7 @@ class ServiceRepository implements IServiceRepository {
   async getServicesByBusinessId(businessId: string): Promise<Service[]> {
     try {
       const pk = this.getPk(businessId);
-      console.debug("pk", pk);
+      Logger.debug("pk", pk);
 
       const command = new QueryCommand({
         TableName: this.tableName,
@@ -78,7 +79,7 @@ class ServiceRepository implements IServiceRepository {
         updatedAt: new Date(item.updatedAt as string),
       }));
     } catch (error) {
-      console.error("Error fetching services from DynamoDB:", error);
+      Logger.error("Error fetching services from DynamoDB:", error);
       throw error;
     }
   }

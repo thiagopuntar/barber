@@ -19,6 +19,10 @@
       "description": "Availability search endpoints"
     },
     {
+      "name": "Appointments",
+      "description": "Appointment management endpoints"
+    },
+    {
       "name": "Business",
       "description": "Business detail endpoints"
     }
@@ -192,6 +196,76 @@
           "type": "aws_proxy",
           "httpMethod": "POST",
           "uri": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetEmployeesLambdaArn}/invocations",
+          "passthroughBehavior": "when_no_match"
+        }
+      }
+    },
+    "/{businessId}/appointments": {
+      "post": {
+        "tags": ["Appointments"],
+        "operationId": "createAppointment",
+        "parameters": [
+          {
+            "name": "businessId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAppointmentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Appointment created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateAppointmentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "CognitoAuthorizer": []
+          }
+        ],
+        "x-amazon-apigateway-request-validator": "all",
+        "x-amazon-apigateway-integration": {
+          "type": "aws_proxy",
+          "httpMethod": "POST",
+          "uri": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateAppointmentLambdaArn}/invocations",
           "passthroughBehavior": "when_no_match"
         }
       }
@@ -630,8 +704,62 @@
             }
           }
         }
+      },
+      "CreateAppointmentRequest": {
+        "title": "CreateAppointmentRequest",
+        "required": [
+          "serviceId",
+          "employeeId",
+          "startTime",
+          "endTime"
+        ],
+        "type": "object",
+        "properties": {
+          "serviceId": {
+          "employeeId": {
+            "type": "string"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateAppointmentResponse": {
+        "title": "CreateAppointmentResponse",
+        "required": ["appointmentId"],
+        "type": "object",
+        "properties": {
+          "appointmentId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "CognitoAuthorizer": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header",
+        "x-amazon-apigateway-authtype": "cognito_user_pools",
+        "x-amazon-apigateway-authorizer": {
+          "type": "cognito_user_pools",
+          "providerARNs": ["${UserPoolArn}"]
+        }
       }
     }
   },
-  "x-amazon-apigateway-security-policy": "TLS_1_0"
+  "x-amazon-apigateway-security-policy": "TLS_1_0",
+  "x-amazon-apigateway-request-validators": {
+    "all": {
+      "validateRequestBody": true,
+      "validateRequestParameters": true
+    }
+  }
+}
 }

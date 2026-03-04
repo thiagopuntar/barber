@@ -1,5 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { EmployeeRepository } from "../repositories/EmployeeRepository";
+import { Logger } from "../utils/Logger";
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
@@ -45,7 +46,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       }),
     };
   } catch (error) {
-    console.error("Error getting services:", error);
+    Logger.error("Error getting services:", error);
 
     return {
       statusCode: 500,
