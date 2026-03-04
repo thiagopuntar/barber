@@ -79,6 +79,7 @@ class AppointmentRepository implements IAppointmentRepository {
         employee: appointment.employee,
         service: appointment.service,
         customer: appointment.customer,
+        customerId: appointment.customer.id,
       } 
       Logger.debug("Creating appointment in DynamoDB:", payload);
 
