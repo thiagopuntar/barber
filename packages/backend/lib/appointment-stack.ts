@@ -34,6 +34,18 @@ export class AppointmentStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY, // For development only
     });
 
+    appointmentTable.addGlobalSecondaryIndex({
+      indexName: "pk-customerId-index",
+      partitionKey: {
+        name: "pk",
+        type: dynamodb.AttributeType.STRING,
+      },
+      sortKey: {
+        name: "customerId",
+        type: dynamodb.AttributeType.STRING,
+      },
+    });
+
     // Auth Construct
     const authConstruct = new AuthConstruct(this, "AuthConstruct");
 
