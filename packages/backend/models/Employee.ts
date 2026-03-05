@@ -5,7 +5,7 @@ class Employee {
   #name: string;
   #createdAt: Date;
   #updatedAt: Date;
-  #availability: Availability[];
+  #availability: Availability[] = [];
 
   constructor({ id, name, createdAt, updatedAt }: {
     id: string;

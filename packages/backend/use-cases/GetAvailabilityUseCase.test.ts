@@ -14,15 +14,15 @@ describe("GetAvailabilityUseCase", () => {
 
   beforeEach(() => {
     employeeRepository = {
-      getEmployee: jest.fn(),
-      getEmployeesByBusinessId: jest.fn(),
+      getById: jest.fn(),
+      getAllByBusinessId: jest.fn(),
     } as any;
     serviceRepository = {
       getServiceById: jest.fn(),
       getServicesByBusinessId: jest.fn(),
     } as any;
     appointmentRepository = {
-      getAppointmentsByEmployeeIdAndDate: jest.fn(),
+      getAllByEmployeeIdAndDate: jest.fn(),
     } as any;
 
     useCase = new GetAvailabilityUseCase(
@@ -40,22 +40,26 @@ describe("GetAvailabilityUseCase", () => {
     const initialDate = new Date(2024, 2, 4); // Monday (March 4, 2024)
     const finalDate = new Date(2024, 2, 4);
 
-    const employee = new Employee();
-    employee.id = employeeId;
-    employee.availability = [
+    const employee = new Employee({
+      id: employeeId,
+      name: "John Doe",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    employee.addAvailability(
       {
         weekDay: 1, // Monday
         range: [{ start: "09:00", end: "10:00" }],
       },
-    ];
+    );
 
     const service = new Service();
     service.id = serviceId;
     service.duration = 30;
 
-    employeeRepository.getEmployee.mockResolvedValue(employee);
+    employeeRepository.getById.mockResolvedValue(employee);
     serviceRepository.getServiceById.mockResolvedValue(service);
-    appointmentRepository.getAppointmentsByEmployeeIdAndDate.mockResolvedValue([]);
+    appointmentRepository.getAllByEmployeeIdAndDate.mockResolvedValue([]);
 
     // Act
     const result = await useCase.execute({
@@ -73,9 +77,9 @@ describe("GetAvailabilityUseCase", () => {
       { start: "09:00", end: "09:30" },
       { start: "09:30", end: "10:00" },
     ]);
-    expect(employeeRepository.getEmployee).toHaveBeenCalledWith(businessId, employeeId);
+    expect(employeeRepository.getById).toHaveBeenCalledWith(businessId, employeeId);
     expect(serviceRepository.getServiceById).toHaveBeenCalledWith(businessId, serviceId);
-    expect(appointmentRepository.getAppointmentsByEmployeeIdAndDate).toHaveBeenCalledWith(
+    expect(appointmentRepository.getAllByEmployeeIdAndDate).toHaveBeenCalledWith(
       businessId,
       employeeId,
       initialDate
@@ -90,9 +94,13 @@ describe("GetAvailabilityUseCase", () => {
     const initialDate = new Date(2024, 2, 4); // Monday
     const finalDate = new Date(2024, 2, 5); // Tuesday
 
-    const employee = new Employee();
-    employee.id = employeeId;
-    employee.availability = [
+    const employee = new Employee({
+      id: employeeId,
+      name: "John Doe",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    employee.addAvailability(
       {
         weekDay: 1, // Monday
         range: [{ start: "09:00", end: "10:00" }],
@@ -101,15 +109,15 @@ describe("GetAvailabilityUseCase", () => {
         weekDay: 2, // Tuesday
         range: [{ start: "14:00", end: "15:00" }],
       },
-    ];
+    );
 
     const service = new Service();
     service.id = serviceId;
     service.duration = 60;
 
-    employeeRepository.getEmployee.mockResolvedValue(employee);
+    employeeRepository.getById.mockResolvedValue(employee);
     serviceRepository.getServiceById.mockResolvedValue(service);
-    appointmentRepository.getAppointmentsByEmployeeIdAndDate.mockResolvedValue([]);
+    appointmentRepository.getAllByEmployeeIdAndDate.mockResolvedValue([]);
 
     // Act
     const result = await useCase.execute({
@@ -135,27 +143,35 @@ describe("GetAvailabilityUseCase", () => {
     const serviceId = "srv-789";
     const date = new Date(2024, 2, 4); // Monday
 
-    const employee = new Employee();
-    employee.id = employeeId;
-    employee.availability = [
+    const employee = new Employee({
+      id: employeeId,
+      name: "John Doe",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    employee.addAvailability(
       {
         weekDay: 1,
         range: [{ start: "09:00", end: "11:00" }],
       },
-    ];
+    );
 
     const service = new Service();
     service.id = serviceId;
     service.duration = 60;
 
-    const appointment = new Appointment();
-    appointment.date = date;
-    appointment.initialTime = "09:00";
-    appointment.finalTime = "10:00";
+    const appointment = new Appointment({
+      id: "appt-1",
+      date: date,
+      initialTime: "09:00",
+      finalTime: "10:00",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
 
-    employeeRepository.getEmployee.mockResolvedValue(employee);
+    employeeRepository.getById.mockResolvedValue(employee);
     serviceRepository.getServiceById.mockResolvedValue(service);
-    appointmentRepository.getAppointmentsByEmployeeIdAndDate.mockResolvedValue([appointment]);
+    appointmentRepository.getAllByEmployeeIdAndDate.mockResolvedValue([appointment]);
 
     // Act
     const result = await useCase.execute({
@@ -178,22 +194,26 @@ describe("GetAvailabilityUseCase", () => {
     const serviceId = "srv-789";
     const date = new Date(2024, 2, 3); // Sunday
 
-    const employee = new Employee();
-    employee.id = employeeId;
-    employee.availability = [
+    const employee = new Employee({
+      id: employeeId,
+      name: "John Doe",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    employee.addAvailability(
       {
         weekDay: 1, // Monday
         range: [{ start: "09:00", end: "11:00" }],
       },
-    ];
+    );
 
     const service = new Service();
     service.id = serviceId;
     service.duration = 60;
 
-    employeeRepository.getEmployee.mockResolvedValue(employee);
+    employeeRepository.getById.mockResolvedValue(employee);
     serviceRepository.getServiceById.mockResolvedValue(service);
-    appointmentRepository.getAppointmentsByEmployeeIdAndDate.mockResolvedValue([]);
+    appointmentRepository.getAllByEmployeeIdAndDate.mockResolvedValue([]);
 
     // Act
     const result = await useCase.execute({

@@ -30,7 +30,7 @@ describe("AppointmentRepository", () => {
     repository = new AppointmentRepository(tableName);
   });
 
-  describe("getAppointmentsByEmployeeIdAndDate", () => {
+  describe("getAllByEmployeeIdAndDate", () => {
     const businessId = "business-123";
     const employeeId = "employee-456";
     const date = new Date("2024-01-15");
@@ -65,7 +65,7 @@ describe("AppointmentRepository", () => {
       });
 
       // Act
-      const result = await repository.getAppointmentsByEmployeeIdAndDate(
+      const result = await repository.getAllByEmployeeIdAndDate(
         businessId,
         employeeId,
         date
@@ -110,7 +110,7 @@ describe("AppointmentRepository", () => {
       });
 
       // Act
-      const result = await repository.getAppointmentsByEmployeeIdAndDate(
+      const result = await repository.getAllByEmployeeIdAndDate(
         businessId,
         employeeId,
         date
@@ -128,7 +128,7 @@ describe("AppointmentRepository", () => {
       });
 
       // Act
-      const result = await repository.getAppointmentsByEmployeeIdAndDate(
+      const result = await repository.getAllByEmployeeIdAndDate(
         businessId,
         employeeId,
         date
@@ -146,7 +146,7 @@ describe("AppointmentRepository", () => {
 
       // Act & Assert
       await expect(
-        repository.getAppointmentsByEmployeeIdAndDate(businessId, employeeId, date)
+        repository.getAllByEmployeeIdAndDate(businessId, employeeId, date)
       ).rejects.toThrow("DynamoDB connection failed");
       expect(mockSend).toHaveBeenCalledTimes(1);
     });
@@ -156,7 +156,7 @@ describe("AppointmentRepository", () => {
       mockSend.mockResolvedValue({ Items: [] });
 
       // Act
-      await repository.getAppointmentsByEmployeeIdAndDate(businessId, employeeId, date);
+      await repository.getAllByEmployeeIdAndDate(businessId, employeeId, date);
 
       // Assert
       expect(mockedQueryCommand).toHaveBeenCalledWith(
@@ -173,7 +173,7 @@ describe("AppointmentRepository", () => {
       mockSend.mockResolvedValue({ Items: [] });
 
       // Act
-      await repository.getAppointmentsByEmployeeIdAndDate(businessId, employeeId, date);
+      await repository.getAllByEmployeeIdAndDate(businessId, employeeId, date);
 
       // Assert
       expect(mockedQueryCommand).toHaveBeenCalledWith(
@@ -191,7 +191,7 @@ describe("AppointmentRepository", () => {
       mockSend.mockResolvedValue({ Items: [] });
 
       // Act
-      await repository.getAppointmentsByEmployeeIdAndDate(businessId, employeeId, dateWithTime);
+      await repository.getAllByEmployeeIdAndDate(businessId, employeeId, dateWithTime);
 
       // Assert
       expect(mockedQueryCommand).toHaveBeenCalledWith(
@@ -221,7 +221,7 @@ describe("AppointmentRepository", () => {
       });
 
       // Act
-      const result = await repository.getAppointmentsByEmployeeIdAndDate(
+      const result = await repository.getAllByEmployeeIdAndDate(
         businessId,
         employeeId,
         date
@@ -278,7 +278,7 @@ describe("AppointmentRepository", () => {
       });
 
       // Act
-      const result = await repository.getAppointmentsByEmployeeIdAndDate(
+      const result = await repository.getAllByEmployeeIdAndDate(
         businessId,
         employeeId,
         date
@@ -286,13 +286,13 @@ describe("AppointmentRepository", () => {
 
       // Assert
       expect(result).toHaveLength(3);
-      expect(result.map(a => a.id)).toEqual([
+      expect(result.map((a: Appointment) => a.id)).toEqual([
         "appointment-morning",
         "appointment-late-morning",
         "appointment-afternoon",
       ]);
-      expect(result.map(a => a.initialTime)).toEqual(["09:00", "11:00", "14:00"]);
-      expect(result.map(a => a.finalTime)).toEqual(["10:00", "12:00", "15:30"]);
+      expect(result.map((a: Appointment) => a.initialTime)).toEqual(["09:00", "11:00", "14:00"]);
+      expect(result.map((a: Appointment) => a.finalTime)).toEqual(["10:00", "12:00", "15:30"]);
     });
   });
 });

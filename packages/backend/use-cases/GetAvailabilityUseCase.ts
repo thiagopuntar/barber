@@ -111,7 +111,7 @@ export class GetAvailabilityUseCase {
       const end = `${String(slotEndHour).padStart(2, "0")}:${String(slotEndMinute).padStart(2, "0")}`;
 
       const hasConflict = appointments.some(appointment => {
-        return appointment.conflictsWith(range.start, range.end);
+        return appointment.conflictsWith(start, end);
       });
 
       if (!hasConflict) {

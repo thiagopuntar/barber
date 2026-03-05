@@ -13,8 +13,8 @@ describe("GetAvailabilityPerSlotUseCase", () => {
 
   beforeEach(() => {
     employeeRepository = {
-      getEmployeesByBusinessId: jest.fn(),
-      getEmployee: jest.fn(),
+      getAllByBusinessId: jest.fn(),
+      getById: jest.fn(),
     } as any;
     serviceRepository = {
       getServiceById: jest.fn(),
@@ -39,19 +39,25 @@ describe("GetAvailabilityPerSlotUseCase", () => {
     const initialDate = new Date(2024, 2, 4); // Monday (March 4, 2024)
     const finalDate = new Date(2024, 2, 4);
 
-    const emp1 = new Employee();
-    emp1.id = "emp-1";
-    emp1.name = "Employee 1";
+    const emp1 = new Employee({
+      id: "emp-1",
+      name: "Employee 1",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
 
-    const emp2 = new Employee();
-    emp2.id = "emp-2";
-    emp2.name = "Employee 2";
+    const emp2 = new Employee({
+      id: "emp-2",
+      name: "Employee 2",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
 
     const service = new Service();
     service.id = serviceId;
     service.duration = 60;
 
-    employeeRepository.getEmployeesByBusinessId.mockResolvedValue([emp1, emp2]);
+    employeeRepository.getAllByBusinessId.mockResolvedValue([emp1, emp2]);
     serviceRepository.getServiceById.mockResolvedValue(service);
 
     // Mock emp1 availability: 09:00-10:00, 10:00-11:00
@@ -117,7 +123,7 @@ describe("GetAvailabilityPerSlotUseCase", () => {
     const serviceId = "srv-789";
     const date = new Date(2024, 2, 4);
 
-    employeeRepository.getEmployeesByBusinessId.mockResolvedValue([]);
+    employeeRepository.getAllByBusinessId.mockResolvedValue([]);
     serviceRepository.getServiceById.mockResolvedValue(new Service());
 
     // Act
@@ -139,13 +145,17 @@ describe("GetAvailabilityPerSlotUseCase", () => {
     const initialDate = new Date(2024, 2, 4); // Monday
     const finalDate = new Date(2024, 2, 5); // Tuesday
 
-    const emp1 = new Employee();
-    emp1.id = "emp-1";
+    const emp1 = new Employee({
+      id: "emp-1",
+      name: "Employee 1",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
 
     const service = new Service();
     service.duration = 60;
 
-    employeeRepository.getEmployeesByBusinessId.mockResolvedValue([emp1]);
+    employeeRepository.getAllByBusinessId.mockResolvedValue([emp1]);
     serviceRepository.getServiceById.mockResolvedValue(service);
 
     getAvailabilityUseCase.getAvailability.mockResolvedValueOnce([

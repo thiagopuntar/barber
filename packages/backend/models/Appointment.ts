@@ -39,6 +39,38 @@ export default class Appointment {
     return this.#date;
   }
 
+  get id(): string {
+    return this.#id;
+  }
+
+  get initialTime(): string {
+    return this.#initialTime;
+  }
+
+  get finalTime(): string {
+    return this.#finalTime;
+  }
+
+  get createdAt(): Date {
+    return this.#createdAt;
+  }
+
+  get updatedAt(): Date {
+    return this.#updatedAt;
+  }
+
+  get employee(): Employee | undefined {
+    return this.#employee;
+  }
+
+  get service(): Service | undefined {
+    return this.#service;
+  }
+
+  get customer(): any | undefined {
+    return this.#customer;
+  }
+
   conflictsWith(start: string, end: string): boolean {
     return start < this.#finalTime && end > this.#initialTime;
   }

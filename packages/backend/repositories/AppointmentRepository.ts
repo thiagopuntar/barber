@@ -71,6 +71,10 @@ class AppointmentRepository implements IAppointmentRepository {
 
   async create(businessId: string, appointment: Appointment): Promise<Appointment> {
     try {
+      if (!appointment.employee || !appointment.service || !appointment.customer) {
+        throw new Error("Appointment must have employee, service, and customer to be created");
+      }
+
       const payload = {
         pk: this._getPk(businessId),
         sk: this._getSk(appointment.employee.id, appointment.date),
