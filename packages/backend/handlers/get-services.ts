@@ -30,7 +30,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
     // Initialize repository and fetch services
     const serviceRepository = new ServiceRepository(tableName);
-    const services = await serviceRepository.getServicesByBusinessId(businessId);
+    const services = await serviceRepository.getAllByBusinessId(businessId);
 
     return {
       statusCode: 200,

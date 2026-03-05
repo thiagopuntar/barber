@@ -18,8 +18,8 @@ describe("GetAvailabilityUseCase", () => {
       getAllByBusinessId: jest.fn(),
     } as any;
     serviceRepository = {
-      getServiceById: jest.fn(),
-      getServicesByBusinessId: jest.fn(),
+      getById: jest.fn(),
+      getAllByBusinessId: jest.fn(),
     } as any;
     appointmentRepository = {
       getAllByEmployeeIdAndDate: jest.fn(),
@@ -53,12 +53,18 @@ describe("GetAvailabilityUseCase", () => {
       },
     );
 
-    const service = new Service();
-    service.id = serviceId;
-    service.duration = 30;
+    const service = new Service({
+      id: serviceId,
+      name: "Test Service",
+      description: "Test Description",
+      price: 100,
+      duration: 30,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
 
     employeeRepository.getById.mockResolvedValue(employee);
-    serviceRepository.getServiceById.mockResolvedValue(service);
+    serviceRepository.getById.mockResolvedValue(service);
     appointmentRepository.getAllByEmployeeIdAndDate.mockResolvedValue([]);
 
     // Act
@@ -78,7 +84,7 @@ describe("GetAvailabilityUseCase", () => {
       { start: "09:30", end: "10:00" },
     ]);
     expect(employeeRepository.getById).toHaveBeenCalledWith(businessId, employeeId);
-    expect(serviceRepository.getServiceById).toHaveBeenCalledWith(businessId, serviceId);
+    expect(serviceRepository.getById).toHaveBeenCalledWith(businessId, serviceId);
     expect(appointmentRepository.getAllByEmployeeIdAndDate).toHaveBeenCalledWith(
       businessId,
       employeeId,
@@ -111,12 +117,18 @@ describe("GetAvailabilityUseCase", () => {
       },
     );
 
-    const service = new Service();
-    service.id = serviceId;
-    service.duration = 60;
+    const service = new Service({
+      id: serviceId,
+      name: "Test Service",
+      description: "Test Description",
+      price: 100,
+      duration: 60,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
 
     employeeRepository.getById.mockResolvedValue(employee);
-    serviceRepository.getServiceById.mockResolvedValue(service);
+    serviceRepository.getById.mockResolvedValue(service);
     appointmentRepository.getAllByEmployeeIdAndDate.mockResolvedValue([]);
 
     // Act
@@ -156,9 +168,15 @@ describe("GetAvailabilityUseCase", () => {
       },
     );
 
-    const service = new Service();
-    service.id = serviceId;
-    service.duration = 60;
+    const service = new Service({
+      id: serviceId,
+      name: "Test Service",
+      description: "Test Description",
+      price: 100,
+      duration: 60,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
 
     const appointment = new Appointment({
       id: "appt-1",
@@ -167,10 +185,22 @@ describe("GetAvailabilityUseCase", () => {
       finalTime: "10:00",
       createdAt: new Date(),
       updatedAt: new Date(),
+      employee: {
+        id: employeeId,
+        name: "John Doe",
+      },
+      service: {
+        id: serviceId,
+        name: "Test Service",
+      },
+      customer: {
+        id: "cust-123",
+        name: "Jane Doe",
+      },
     });
 
     employeeRepository.getById.mockResolvedValue(employee);
-    serviceRepository.getServiceById.mockResolvedValue(service);
+    serviceRepository.getById.mockResolvedValue(service);
     appointmentRepository.getAllByEmployeeIdAndDate.mockResolvedValue([appointment]);
 
     // Act
@@ -207,12 +237,18 @@ describe("GetAvailabilityUseCase", () => {
       },
     );
 
-    const service = new Service();
-    service.id = serviceId;
-    service.duration = 60;
+    const service = new Service({
+      id: serviceId,
+      name: "Test Service",
+      description: "Test Description",
+      price: 100,
+      duration: 60,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
 
     employeeRepository.getById.mockResolvedValue(employee);
-    serviceRepository.getServiceById.mockResolvedValue(service);
+    serviceRepository.getById.mockResolvedValue(service);
     appointmentRepository.getAllByEmployeeIdAndDate.mockResolvedValue([]);
 
     // Act

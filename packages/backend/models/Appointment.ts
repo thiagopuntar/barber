@@ -1,15 +1,16 @@
-import Customer from "./Customer";
-import Employee from "./Employee";
-import Service from "./Service";
+type GenericObject = {
+  id: string;
+  name: string;
+}
 
 export default class Appointment {
   #id: string;
   #date: Date;
   #initialTime: string;
   #finalTime: string;
-  #employee: Employee | undefined;
-  #service: Service | undefined;
-  #customer: Customer | undefined;
+  #employee: GenericObject;
+  #service: GenericObject;
+  #customer: GenericObject;
   #createdAt: Date;
   #updatedAt: Date;
 
@@ -18,9 +19,9 @@ export default class Appointment {
     date: Date;
     initialTime: string;
     finalTime: string;
-    employee?: Employee;
-    service?: Service;
-    customer?: Customer;
+    employee: GenericObject;
+    service: GenericObject;
+    customer: GenericObject;
     createdAt: Date;
     updatedAt: Date;
   }) {
@@ -59,15 +60,15 @@ export default class Appointment {
     return this.#updatedAt;
   }
 
-  get employee(): Employee | undefined {
+  get employee(): GenericObject {
     return this.#employee;
   }
 
-  get service(): Service | undefined {
+  get service(): GenericObject {
     return this.#service;
   }
 
-  get customer(): any | undefined {
+  get customer(): GenericObject {
     return this.#customer;
   }
 

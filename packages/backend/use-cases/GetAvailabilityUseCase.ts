@@ -21,7 +21,7 @@ export class GetAvailabilityUseCase {
   }): Promise<SlotPerDay[]> {
     const { businessId, serviceId, employeeId, initialDate, finalDate } = input;
     const employee = await this.employeeRepository.getById(businessId, employeeId);
-    const service = await this.serviceRepository.getServiceById(businessId, serviceId);
+    const service = await this.serviceRepository.getById(businessId, serviceId);
 
     return this.getAvailability({
       businessId,

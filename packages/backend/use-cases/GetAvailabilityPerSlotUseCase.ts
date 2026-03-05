@@ -18,7 +18,7 @@ export class GetAvailabilityPerSlotUseCase {
   }): Promise<SlotPerDayAndEmployee[]> {
     const { businessId, serviceId, initialDate, finalDate } = input;
     const employees = await this.employeeRepository.getAllByBusinessId(businessId);
-    const service = await this.serviceRepository.getServiceById(businessId, serviceId);
+    const service = await this.serviceRepository.getById(businessId, serviceId);
 
     const result: SlotPerDayAndEmployee[] = [];
     const dateToSlotsMap: Map<

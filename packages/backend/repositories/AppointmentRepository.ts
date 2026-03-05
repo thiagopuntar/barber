@@ -16,11 +16,11 @@ class AppointmentRepository implements IAppointmentRepository {
     this.dynamoClient = DynamoDBDocumentClient.from(client);
   }
 
-  private _getPk(businessId: string): string {
+  #getPk(businessId: string): string {
     return `${businessId}#appointment`;
   }
 
-  private _getSk(employeeId: string, date: Date, initialTime?: string): string {
+  #getSk(employeeId: string, date: Date, initialTime?: string): string {
     return `${employeeId}#${date.toISOString().split("T")[0]}${initialTime ? `#${initialTime}` : ""}`;
   }
 
@@ -30,10 +30,10 @@ class AppointmentRepository implements IAppointmentRepository {
     date: Date
   ): Promise<Appointment[]> {
     try {
-      const pk = this._getPk(businessId);
+      const pk = this.#getPk(businessId);
       Logger.debug("pk", pk);
 
-      const sk = this._getSk(employeeId, date);
+      const sk = this.#getSk(employeeId, date);
       Logger.debug("sk", sk);
 
       const command = new QueryCommand({
@@ -52,15 +52,25 @@ class AppointmentRepository implements IAppointmentRepository {
       }
 
       return result.Items.map(item => {
-        // const appointment = new Appointment();
-        // return appointment;
         return new Appointment({
           id: item.id as string,
           date: new Date(item.date as string),
           initialTime: item.initialTime as string,
           finalTime: item.finalTime as string,
           createdAt: new Date(item.createdAt),
-          updatedAt: new Date(item.updatedAt)
+          updatedAt: new Date(item.updatedAt),
+          employee: {
+            id: item.employee.id as string,
+            name: item.employee.name as string,
+          },
+          service: {
+            id: item.service.id as string,
+            name: item.service.name as string,
+          },
+          customer: {
+            id: item.customer.id as string,
+            name: item.customer.name as string,
+          },
         });
       });
     } catch (error) {
@@ -71,14 +81,10 @@ class AppointmentRepository implements IAppointmentRepository {
 
   async create(businessId: string, appointment: Appointment): Promise<Appointment> {
     try {
-      if (!appointment.employee || !appointment.service || !appointment.customer) {
-        throw new Error("Appointment must have employee, service, and customer to be created");
-      }
-
       const payload = {
-        pk: this._getPk(businessId),
-        sk: this._getSk(appointment.employee.id, appointment.date),
-        id: appointment.id,
+        pk: this.#getPk(businessId),
+        sk: this.#getSk(appointment.employee.id, appointment.date),
+        appointmentId: appointment.id,
         date: appointment.date.toISOString(),
         initialTime: appointment.initialTime,
         finalTime: appointment.finalTime,
@@ -101,7 +107,7 @@ class AppointmentRepository implements IAppointmentRepository {
 
       return createdAppointment.Attributes as Appointment;
     } catch (error) {
-      Logger.error("Error creating appointment in DynamoDB:", error);
+      Logger.error(`Error creating appointment in DynamoDB: ${appointment.id}`, error);
       throw error;
     }
   }
