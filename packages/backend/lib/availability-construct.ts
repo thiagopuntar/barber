@@ -1,5 +1,6 @@
 import { Construct } from "constructs";
 import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as logs from "aws-cdk-lib/aws-logs";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as path from "path";
@@ -22,6 +23,7 @@ export class AvailabilityConstruct extends Construct implements IAPIRestLambdaCo
       runtime: lambda.Runtime.NODEJS_22_X,
       entry: path.join(__dirname, "../handlers/get-availability-employee.ts"),
       handler: "handler",
+      logRetention: logs.RetentionDays.THREE_DAYS,
       bundling: {
         forceDockerBundling: false,
         minify: true,
