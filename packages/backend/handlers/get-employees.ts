@@ -30,7 +30,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
     // Initialize repository and fetch services
     const employeeRepository = new EmployeeRepository(tableName);
-    const employees = await employeeRepository.getEmployeesByBusinessId(businessId);
+    const employees = await employeeRepository.getAllByBusinessId(businessId);
 
     return {
       statusCode: 200,

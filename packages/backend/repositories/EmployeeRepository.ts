@@ -13,13 +13,13 @@ export class EmployeeRepository implements IEmployeeRepository {
     this.dynamoClient = DynamoDBDocumentClient.from(client);
   }
 
-  private getPk(businessId: string): string {
+  #getPk(businessId: string): string {
     return `${businessId}#employee`;
   }
 
-  async getEmployeesByBusinessId(businessId: string): Promise<Employee[]> {
+  async getAllByBusinessId(businessId: string): Promise<Employee[]> {
     try {
-      const pk = this.getPk(businessId);
+      const pk = this.#getPk(businessId);
 
       const command = new QueryCommand({
         TableName: this.tableName,
@@ -36,12 +36,13 @@ export class EmployeeRepository implements IEmployeeRepository {
       }
 
       return result.Items.map(item => {
-        const employee = new Employee();
-        employee.id = item.sk as string;
-        employee.name = item.name as string;
-        employee.createdAt = new Date(item.createdAt as string);
-        employee.updatedAt = new Date(item.updatedAt as string);
-        employee.availability = item.availability as Availability[];
+        const employee = new Employee({
+          id: item.sk as string,
+          name: item.name as string,
+          createdAt: new Date(item.createdAt as string),
+          updatedAt: new Date(item.updatedAt as string)
+        });
+        employee.addAvailability(...(item.availability as Availability[]));
         return employee;
       });
     } catch (error) {
@@ -50,10 +51,13 @@ export class EmployeeRepository implements IEmployeeRepository {
     }
   }
 
-  async getEmployee(businessId: string, employeeId: string): Promise<Employee> {
+  async getById(businessId: string, employeeId: string): Promise<Employee> {
     try {
-      const pk = this.getPk(businessId);
+      const pk = this.#getPk(businessId);
       const sk = employeeId;
+      Logger.debug(`Getting employee by id ${employeeId} for business ${businessId}`);
+      Logger.debug(`pk: ${pk}`);
+      Logger.debug(`sk: ${sk}`);
 
       const command = new GetCommand({
         TableName: this.tableName,
@@ -63,15 +67,20 @@ export class EmployeeRepository implements IEmployeeRepository {
       const result = await this.dynamoClient.send(command);
 
       if (!result.Item) {
+        Logger.info(`Employee not found for business ${businessId} and employee ${employeeId}`);
         throw new Error("Employee not found");
       }
 
-      const employee = new Employee();
-      employee.id = result.Item.sk as string;
-      employee.name = result.Item.name as string;
-      employee.createdAt = new Date(result.Item.createdAt as string);
-      employee.updatedAt = new Date(result.Item.updatedAt as string);
-      employee.availability = result.Item.availability as Availability[];
+      Logger.debug(`Employee found for business ${businessId} and employee ${employeeId}`);
+      Logger.debug(`Item: ${JSON.stringify(result.Item)}`);
+
+      const employee = new Employee({
+        id: result.Item.sk as string,
+        name: result.Item.name as string,
+        createdAt: new Date(result.Item.createdAt as string),
+        updatedAt: new Date(result.Item.updatedAt as string)
+      });
+      employee.addAvailability(...(result.Item.availability as Availability[]));
       return employee;
     } catch (error) {
       Logger.error("Error fetching employee from DynamoDB:", error);

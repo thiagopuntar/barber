@@ -1,6 +1,6 @@
 import { IEmployeeRepository } from "../repositories/IEmployeeRepository";
 import IServiceRepository from "../repositories/IServiceRepository";
-import { SlotPerDayAndEmployee } from "../models/Employee";
+import Employee from "../models/Employee";
 import { GetAvailabilityUseCase } from "./GetAvailabilityUseCase";
 
 export class GetAvailabilityPerSlotUseCase {
@@ -8,7 +8,7 @@ export class GetAvailabilityPerSlotUseCase {
     private employeeRepository: IEmployeeRepository,
     private serviceRepository: IServiceRepository,
     private getAvailabilityUseCase: GetAvailabilityUseCase
-  ) {}
+  ) { }
 
   async execute(input: {
     businessId: string;
@@ -17,7 +17,7 @@ export class GetAvailabilityPerSlotUseCase {
     finalDate: Date;
   }): Promise<SlotPerDayAndEmployee[]> {
     const { businessId, serviceId, initialDate, finalDate } = input;
-    const employees = await this.employeeRepository.getEmployeesByBusinessId(businessId);
+    const employees = await this.employeeRepository.getAllByBusinessId(businessId);
     const service = await this.serviceRepository.getServiceById(businessId, serviceId);
 
     const result: SlotPerDayAndEmployee[] = [];
@@ -67,3 +67,12 @@ export class GetAvailabilityPerSlotUseCase {
     return result.sort((a, b) => a.date.getTime() - b.date.getTime());
   }
 }
+
+export type SlotPerDayAndEmployee = {
+  date: Date;
+  slots: Array<{
+    start: string;
+    end: string;
+    employees: Employee[];
+  }>;
+};

@@ -3,6 +3,8 @@ import { DynamoDBDocumentClient, PutCommand, QueryCommand } from "@aws-sdk/lib-d
 import IAppointmentRepository from "./IAppointmentRepository";
 import Appointment from "../models/Appointment";
 import { Logger } from "../utils/Logger";
+import Employee, { Availability } from "../models/Employee";
+import Service from "../models/Service";
 
 class AppointmentRepository implements IAppointmentRepository {
   private dynamoClient: DynamoDBDocumentClient;
@@ -22,7 +24,7 @@ class AppointmentRepository implements IAppointmentRepository {
     return `${employeeId}#${date.toISOString().split("T")[0]}${initialTime ? `#${initialTime}` : ""}`;
   }
 
-  async getAppointmentsByEmployeeIdAndDate(
+  async getAllByEmployeeIdAndDate(
     businessId: string,
     employeeId: string,
     date: Date
@@ -50,14 +52,16 @@ class AppointmentRepository implements IAppointmentRepository {
       }
 
       return result.Items.map(item => {
-        const appointment = new Appointment();
-        appointment.id = item.id as string;
-        appointment.date = new Date(item.date as string);
-        appointment.initialTime = item.initialTime as string;
-        appointment.finalTime = item.finalTime as string;
-        appointment.createdAt = new Date(item.createdAt as string);
-        appointment.updatedAt = new Date(item.updatedAt as string);
-        return appointment;
+        // const appointment = new Appointment();
+        // return appointment;
+        return new Appointment({
+          id: item.id as string,
+          date: new Date(item.date as string),
+          initialTime: item.initialTime as string,
+          finalTime: item.finalTime as string,
+          createdAt: new Date(item.createdAt),
+          updatedAt: new Date(item.updatedAt)
+        });
       });
     } catch (error) {
       Logger.error("Error fetching appointments from DynamoDB:", error);
@@ -65,7 +69,7 @@ class AppointmentRepository implements IAppointmentRepository {
     }
   }
 
-  async createAppointment(businessId: string, appointment: Appointment): Promise<Appointment> {
+  async create(businessId: string, appointment: Appointment): Promise<Appointment> {
     try {
       const payload = {
         pk: this._getPk(businessId),
@@ -80,7 +84,7 @@ class AppointmentRepository implements IAppointmentRepository {
         service: appointment.service,
         customer: appointment.customer,
         customerId: appointment.customer.id,
-      } 
+      }
       Logger.debug("Creating appointment in DynamoDB:", payload);
 
       const command = new PutCommand({
