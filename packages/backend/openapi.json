@@ -707,59 +707,54 @@
       },
       "CreateAppointmentRequest": {
         "title": "CreateAppointmentRequest",
-        "required": [
-          "serviceId",
-          "employeeId",
-          "startTime",
-          "endTime"
-        ],
+        "required": ["serviceId", "employeeId", "startTime", "endTime"],
         "type": "object",
         "properties": {
           "serviceId": {
-          "employeeId": {
-            "type": "string"
+            "employeeId": {
+              "type": "string"
+            },
+            "startTime": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "endTime": {
+              "type": "string",
+              "format": "date-time"
+            }
           },
-          "startTime": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "endTime": {
-            "type": "string",
-            "format": "date-time"
-          }
+          "additionalProperties": false
         },
-        "additionalProperties": false
+        "CreateAppointmentResponse": {
+          "title": "CreateAppointmentResponse",
+          "required": ["appointmentId"],
+          "type": "object",
+          "properties": {
+            "appointmentId": {
+              "type": "string"
+            }
+          }
+        }
       },
-      "CreateAppointmentResponse": {
-        "title": "CreateAppointmentResponse",
-        "required": ["appointmentId"],
-        "type": "object",
-        "properties": {
-          "appointmentId": {
-            "type": "string"
+      "securitySchemes": {
+        "CognitoAuthorizer": {
+          "type": "apiKey",
+          "name": "Authorization",
+          "in": "header",
+          "x-amazon-apigateway-authtype": "cognito_user_pools",
+          "x-amazon-apigateway-authorizer": {
+            "type": "cognito_user_pools",
+            "providerARNs": ["${UserPoolArn}"]
           }
         }
       }
     },
-    "securitySchemes": {
-      "CognitoAuthorizer": {
-        "type": "apiKey",
-        "name": "Authorization",
-        "in": "header",
-        "x-amazon-apigateway-authtype": "cognito_user_pools",
-        "x-amazon-apigateway-authorizer": {
-          "type": "cognito_user_pools",
-          "providerARNs": ["${UserPoolArn}"]
-        }
+    "x-amazon-apigateway-security-policy": "TLS_1_0",
+    "x-amazon-apigateway-request-validators": {
+      "all": {
+        "validateRequestBody": true,
+        "validateRequestParameters": true
       }
     }
-  },
-  "x-amazon-apigateway-security-policy": "TLS_1_0",
-  "x-amazon-apigateway-request-validators": {
-    "all": {
-      "validateRequestBody": true,
-      "validateRequestParameters": true
-    }
   }
-}
 }

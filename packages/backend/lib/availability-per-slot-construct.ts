@@ -10,7 +10,10 @@ interface AvailabilityPerSlotConstructProps {
   table: dynamodb.Table;
 }
 
-export class AvailabilityPerSlotConstruct extends Construct implements IAPIRestLambdaConstruct {
+export class AvailabilityPerSlotConstruct
+  extends Construct
+  implements IAPIRestLambdaConstruct
+{
   public readonly lambda: NodejsFunction;
   public readonly lambdaName: string = "GetAvailabilityLambdaArn";
 

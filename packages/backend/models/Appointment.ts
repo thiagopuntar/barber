@@ -1,7 +1,7 @@
 type GenericObject = {
   id: string;
   name: string;
-}
+};
 
 export default class Appointment {
   #id: string;
@@ -14,7 +14,17 @@ export default class Appointment {
   #createdAt: Date;
   #updatedAt: Date;
 
-  constructor({ id, date, initialTime, finalTime, employee, service, customer, createdAt, updatedAt }: {
+  constructor({
+    id,
+    date,
+    initialTime,
+    finalTime,
+    employee,
+    service,
+    customer,
+    createdAt,
+    updatedAt,
+  }: {
     id: string;
     date: Date;
     initialTime: string;

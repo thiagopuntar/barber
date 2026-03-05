@@ -10,7 +10,7 @@ export class GetAvailabilityUseCase {
     private employeeRepository: IEmployeeRepository,
     private serviceRepository: IServiceRepository,
     private appointmentRepository: IAppointmentRepository
-  ) { }
+  ) {}
 
   async execute(input: {
     businessId: string;
@@ -50,7 +50,12 @@ export class GetAvailabilityUseCase {
         employee.id,
         currentDate
       );
-      const slots = this.getSlotPerDay({ date: currentDate, duration, employee, appointments });
+      const slots = this.getSlotPerDay({
+        date: currentDate,
+        duration,
+        employee,
+        appointments,
+      });
       freeSlots.push(...slots);
       dateCopy.setDate(dateCopy.getDate() + 1);
     }
@@ -58,12 +63,19 @@ export class GetAvailabilityUseCase {
     return freeSlots;
   }
 
-  getSlotPerDay(input: { date: Date, duration: number, employee: Employee, appointments: Appointment[] }): SlotPerDay[] {
+  getSlotPerDay(input: {
+    date: Date;
+    duration: number;
+    employee: Employee;
+    appointments: Appointment[];
+  }): SlotPerDay[] {
     const { date, duration, employee, appointments } = input;
     const day = date.getDay();
     const availability = employee.getAvailabilityForWeekDay(day);
 
-    Logger.debug(`Availability for day ${day} and employee ${employee.id}: ${JSON.stringify(availability)}`);
+    Logger.debug(
+      `Availability for day ${day} and employee ${employee.id}: ${JSON.stringify(availability)}`
+    );
     if (!availability) {
       Logger.debug(`No availability for day ${day}, and employee ${employee.id}`);
       return [];
@@ -76,7 +88,9 @@ export class GetAvailabilityUseCase {
       slots.push(...rangeSlots);
     }
 
-    Logger.debug(`Slots for day ${day} and employee ${employee.id}: ${JSON.stringify(slots)}`);
+    Logger.debug(
+      `Slots for day ${day} and employee ${employee.id}: ${JSON.stringify(slots)}`
+    );
 
     return [
       {
@@ -131,4 +145,4 @@ export type SlotPerDay = {
     start: string;
     end: string;
   }>;
-}
+};

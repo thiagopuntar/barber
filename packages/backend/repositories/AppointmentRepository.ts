@@ -94,7 +94,7 @@ class AppointmentRepository implements IAppointmentRepository {
         service: appointment.service,
         customer: appointment.customer,
         customerId: appointment.customer.id,
-      }
+      };
       Logger.debug("Creating appointment in DynamoDB:", payload);
 
       const command = new PutCommand({

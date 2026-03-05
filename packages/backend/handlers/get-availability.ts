@@ -6,7 +6,9 @@ import { GetAvailabilityUseCase } from "../use-cases/GetAvailabilityUseCase";
 import { GetAvailabilityPerSlotUseCase } from "../use-cases/GetAvailabilityPerSlotUseCase";
 import { Logger } from "../utils/Logger";
 
-export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+export const handler = async (
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> => {
   try {
     // Extract businessId from path parameters
     const businessId = event.pathParameters?.businessId;

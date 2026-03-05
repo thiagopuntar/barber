@@ -141,11 +141,13 @@ describe("ServiceRepository", () => {
       await repository.getAllByBusinessId(businessId);
 
       // Assert
-      expect(mockedQueryCommand).toHaveBeenCalledWith(expect.objectContaining({
-        ExpressionAttributeValues: {
-          ":pk": `${businessId}#service`,
-        },
-      }));
+      expect(mockedQueryCommand).toHaveBeenCalledWith(
+        expect.objectContaining({
+          ExpressionAttributeValues: {
+            ":pk": `${businessId}#service`,
+          },
+        })
+      );
     });
 
     it("should handle DynamoDB errors properly", async () => {

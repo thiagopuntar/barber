@@ -5,7 +5,8 @@ export enum LogLevel {
   ERROR = 3,
 }
 
-const currentLogLevel = (process.env.LOG_LEVEL?.toUpperCase() as keyof typeof LogLevel) || "INFO";
+const currentLogLevel =
+  (process.env.LOG_LEVEL?.toUpperCase() as keyof typeof LogLevel) || "INFO";
 const targetLevel = LogLevel[currentLogLevel] ?? LogLevel.INFO;
 
 export class Logger {

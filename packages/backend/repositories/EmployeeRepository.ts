@@ -40,7 +40,7 @@ export class EmployeeRepository implements IEmployeeRepository {
           id: item.sk as string,
           name: item.name as string,
           createdAt: new Date(item.createdAt as string),
-          updatedAt: new Date(item.updatedAt as string)
+          updatedAt: new Date(item.updatedAt as string),
         });
         employee.addAvailability(...(item.availability as Availability[]));
         return employee;
@@ -67,18 +67,22 @@ export class EmployeeRepository implements IEmployeeRepository {
       const result = await this.dynamoClient.send(command);
 
       if (!result.Item) {
-        Logger.info(`Employee not found for business ${businessId} and employee ${employeeId}`);
+        Logger.info(
+          `Employee not found for business ${businessId} and employee ${employeeId}`
+        );
         throw new Error("Employee not found");
       }
 
-      Logger.debug(`Employee found for business ${businessId} and employee ${employeeId}`);
+      Logger.debug(
+        `Employee found for business ${businessId} and employee ${employeeId}`
+      );
       Logger.debug(`Item: ${JSON.stringify(result.Item)}`);
 
       const employee = new Employee({
         id: result.Item.sk as string,
         name: result.Item.name as string,
         createdAt: new Date(result.Item.createdAt as string),
-        updatedAt: new Date(result.Item.updatedAt as string)
+        updatedAt: new Date(result.Item.updatedAt as string),
       });
       employee.addAvailability(...(result.Item.availability as Availability[]));
       return employee;

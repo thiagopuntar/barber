@@ -1,7 +1,11 @@
 #!/usr/bin/env ts-node
 
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, ScanCommand, BatchWriteCommand } from "@aws-sdk/lib-dynamodb";
+import {
+  DynamoDBDocumentClient,
+  ScanCommand,
+  BatchWriteCommand,
+} from "@aws-sdk/lib-dynamodb";
 import { Logger } from "../utils/Logger";
 
 async function clearTable(tableName: string) {

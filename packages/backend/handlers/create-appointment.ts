@@ -8,7 +8,9 @@ const headers = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+export const handler = async (
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> => {
   try {
     const businessId = event.pathParameters?.businessId;
 

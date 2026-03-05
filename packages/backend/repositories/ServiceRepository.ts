@@ -67,15 +67,18 @@ class ServiceRepository implements IServiceRepository {
         return [];
       }
 
-      return result.Items.map(item => new Service({
-        id: item.sk as string,
-        name: item.name as string,
-        description: item.description as string,
-        price: item.price as number,
-        duration: item.duration as number,
-        createdAt: new Date(item.createdAt as string),
-        updatedAt: new Date(item.updatedAt as string),
-      }));
+      return result.Items.map(
+        item =>
+          new Service({
+            id: item.sk as string,
+            name: item.name as string,
+            description: item.description as string,
+            price: item.price as number,
+            duration: item.duration as number,
+            createdAt: new Date(item.createdAt as string),
+            updatedAt: new Date(item.updatedAt as string),
+          })
+      );
     } catch (error) {
       Logger.error("Error fetching services from DynamoDB:", error);
       throw error;

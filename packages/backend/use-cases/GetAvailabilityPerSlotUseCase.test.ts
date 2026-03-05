@@ -130,15 +130,17 @@ describe("GetAvailabilityPerSlotUseCase", () => {
     const date = new Date(2024, 2, 4);
 
     employeeRepository.getAllByBusinessId.mockResolvedValue([]);
-    serviceRepository.getById.mockResolvedValue(new Service({
-      id: "srv-1",
-      name: "Test Service",
-      description: "Test Description",
-      price: 100,
-      duration: 60,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }));
+    serviceRepository.getById.mockResolvedValue(
+      new Service({
+        id: "srv-1",
+        name: "Test Service",
+        description: "Test Description",
+        price: 100,
+        duration: 60,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+    );
 
     // Act
     const result = await useCase.execute({

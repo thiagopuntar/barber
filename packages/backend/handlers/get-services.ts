@@ -2,7 +2,9 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import ServiceRepository from "../repositories/ServiceRepository";
 import { Logger } from "../utils/Logger";
 
-export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+export const handler = async (
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> => {
   try {
     // Extract businessId from path parameters
     const businessId = event.pathParameters?.businessId;

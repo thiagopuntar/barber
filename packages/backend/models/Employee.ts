@@ -7,7 +7,12 @@ class Employee {
   #updatedAt: Date;
   #availability: Availability[] = [];
 
-  constructor({ id, name, createdAt, updatedAt }: {
+  constructor({
+    id,
+    name,
+    createdAt,
+    updatedAt,
+  }: {
     id: string;
     name: string;
     createdAt: Date;
@@ -61,4 +66,4 @@ export type Availability = {
     start: string;
     end: string;
   }>;
-}
+};

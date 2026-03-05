@@ -291,8 +291,16 @@ describe("AppointmentRepository", () => {
         "appointment-late-morning",
         "appointment-afternoon",
       ]);
-      expect(result.map((a: Appointment) => a.initialTime)).toEqual(["09:00", "11:00", "14:00"]);
-      expect(result.map((a: Appointment) => a.finalTime)).toEqual(["10:00", "12:00", "15:30"]);
+      expect(result.map((a: Appointment) => a.initialTime)).toEqual([
+        "09:00",
+        "11:00",
+        "14:00",
+      ]);
+      expect(result.map((a: Appointment) => a.finalTime)).toEqual([
+        "10:00",
+        "12:00",
+        "15:30",
+      ]);
     });
   });
 });

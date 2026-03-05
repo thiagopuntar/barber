@@ -57,9 +57,13 @@ export class AppointmentStack extends cdk.Stack {
       table: appointmentTable,
     });
 
-    const availabilityConstruct = new AvailabilityConstruct(this, "AvailabilityConstruct", {
-      table: appointmentTable,
-    });
+    const availabilityConstruct = new AvailabilityConstruct(
+      this,
+      "AvailabilityConstruct",
+      {
+        table: appointmentTable,
+      }
+    );
 
     const businessConstruct = new BusinessConstruct(this, "BusinessConstruct", {
       table: appointmentTable,
@@ -73,9 +77,13 @@ export class AppointmentStack extends cdk.Stack {
       }
     );
 
-    const appointmentsConstruct = new AppointmentsConstruct(this, "AppointmentsConstruct", {
-      table: appointmentTable,
-    });
+    const appointmentsConstruct = new AppointmentsConstruct(
+      this,
+      "AppointmentsConstruct",
+      {
+        table: appointmentTable,
+      }
+    );
 
     const apiRestLambdaConstructs: IAPIRestLambdaConstruct[] = [
       servicesConstruct,
@@ -91,8 +99,13 @@ export class AppointmentStack extends cdk.Stack {
       apiRestLambdaConstruct.lambda.addEnvironment("LOG_LEVEL", logLevel);
     }
 
-    const openApiTemplate = fs.readFileSync(path.join(__dirname, "../openapi.json"), "utf8");
-    let openApiWithSubstitutions = openApiTemplate.split("${AWS::Region}").join(cdk.Aws.REGION);
+    const openApiTemplate = fs.readFileSync(
+      path.join(__dirname, "../openapi.json"),
+      "utf8"
+    );
+    let openApiWithSubstitutions = openApiTemplate
+      .split("${AWS::Region}")
+      .join(cdk.Aws.REGION);
     openApiWithSubstitutions = openApiWithSubstitutions
       .split("${UserPoolArn}")
       .join(authConstruct.userPool.userPoolArn);
@@ -106,7 +119,9 @@ export class AppointmentStack extends cdk.Stack {
     const api = new apigateway.SpecRestApi(this, "AppointmentApi", {
       restApiName: "Appointment API",
       description: "API for Appointment services",
-      apiDefinition: apigateway.ApiDefinition.fromInline(JSON.parse(openApiWithSubstitutions)),
+      apiDefinition: apigateway.ApiDefinition.fromInline(
+        JSON.parse(openApiWithSubstitutions)
+      ),
       deployOptions: {
         stageName: "prod",
       },

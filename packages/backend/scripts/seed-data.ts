@@ -115,7 +115,10 @@ async function generateService(businessId: string, index: number): Promise<Servi
   };
 }
 
-async function generateEmployee(businessId: string, index: number): Promise<EmployeeData> {
+async function generateEmployee(
+  businessId: string,
+  index: number
+): Promise<EmployeeData> {
   const { v4: uuidv4 } = await import("uuid");
   const { faker } = await import("@faker-js/faker");
 

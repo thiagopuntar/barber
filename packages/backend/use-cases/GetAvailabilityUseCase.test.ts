@@ -46,12 +46,10 @@ describe("GetAvailabilityUseCase", () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
-    employee.addAvailability(
-      {
-        weekDay: 1, // Monday
-        range: [{ start: "09:00", end: "10:00" }],
-      },
-    );
+    employee.addAvailability({
+      weekDay: 1, // Monday
+      range: [{ start: "09:00", end: "10:00" }],
+    });
 
     const service = new Service({
       id: serviceId,
@@ -114,7 +112,7 @@ describe("GetAvailabilityUseCase", () => {
       {
         weekDay: 2, // Tuesday
         range: [{ start: "14:00", end: "15:00" }],
-      },
+      }
     );
 
     const service = new Service({
@@ -161,12 +159,10 @@ describe("GetAvailabilityUseCase", () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
-    employee.addAvailability(
-      {
-        weekDay: 1,
-        range: [{ start: "09:00", end: "11:00" }],
-      },
-    );
+    employee.addAvailability({
+      weekDay: 1,
+      range: [{ start: "09:00", end: "11:00" }],
+    });
 
     const service = new Service({
       id: serviceId,
@@ -230,12 +226,10 @@ describe("GetAvailabilityUseCase", () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
-    employee.addAvailability(
-      {
-        weekDay: 1, // Monday
-        range: [{ start: "09:00", end: "11:00" }],
-      },
-    );
+    employee.addAvailability({
+      weekDay: 1, // Monday
+      range: [{ start: "09:00", end: "11:00" }],
+    });
 
     const service = new Service({
       id: serviceId,

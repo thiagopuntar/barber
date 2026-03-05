@@ -8,7 +8,7 @@ export class GetAvailabilityPerSlotUseCase {
     private employeeRepository: IEmployeeRepository,
     private serviceRepository: IServiceRepository,
     private getAvailabilityUseCase: GetAvailabilityUseCase
-  ) { }
+  ) {}
 
   async execute(input: {
     businessId: string;
