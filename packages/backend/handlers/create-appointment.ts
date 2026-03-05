@@ -1,5 +1,4 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import { v4 as uuidv4 } from "uuid";
 import { Logger } from "../utils/Logger";
 
 const headers = {
@@ -34,7 +33,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     }
 
     // Dummy logic for now
-    const appointmentId = uuidv4();
+    const appointmentId = "appt-123";
 
     // Access Cognito user information
     const userEmail = event.requestContext.authorizer?.claims?.email;
