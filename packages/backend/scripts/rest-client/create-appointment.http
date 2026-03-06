@@ -1,0 +1,12 @@
+### Create Appointment
+# @name createAppointment
+POST {{baseUrl}}{{businessId}}/appointments
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "serviceId": "{{serviceId}}",
+  "employeeId": "{{employeeId}}",
+  "date": "{{date}}",
+  "initialTime": "{{initialTime}}"
+}

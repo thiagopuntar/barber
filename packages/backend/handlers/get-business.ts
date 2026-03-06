@@ -1,5 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { BusinessRepository } from "../repositories/BusinessRepository";
+import { Logger } from "../utils/Logger";
 
 const headers = {
   "Content-Type": "application/json",
@@ -8,7 +9,9 @@ const headers = {
   "Access-Control-Allow-Methods": "GET, OPTIONS",
 };
 
-export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+export const handler = async (
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> => {
   try {
     const businessId = event.pathParameters?.businessId;
 
@@ -48,7 +51,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       }),
     };
   } catch (error) {
-    console.error("Error getting business:", error);
+    Logger.error("Error getting business:", error);
 
     return {
       statusCode: 500,

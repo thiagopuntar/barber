@@ -7,28 +7,26 @@ import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as path from "path";
 import { IAPIRestLambdaConstruct } from "./api-rest-lambda-construct";
 
-interface AvailabilityPerSlotConstructProps {
+interface AppointmentsConstructProps {
   table: dynamodb.Table;
 }
 
-export class AvailabilityPerSlotConstruct
-  extends Construct
-  implements IAPIRestLambdaConstruct
-{
+export class AppointmentsConstruct extends Construct implements IAPIRestLambdaConstruct {
   public readonly lambda: NodejsFunction;
-  public readonly lambdaName: string = "GetAvailabilityLambdaArn";
+  public readonly lambdaName: string = "CreateAppointmentLambdaArn";
 
-  constructor(scope: Construct, id: string, props: AvailabilityPerSlotConstructProps) {
+  constructor(scope: Construct, id: string, props: AppointmentsConstructProps) {
     super(scope, id);
 
     const { table } = props;
 
-    this.lambda = new NodejsFunction(this, "GetAvailabilityLambda", {
-      functionName: "Appointment-GetAvailability",
+    // Lambda function for creating appointments
+    this.lambda = new NodejsFunction(this, "CreateAppointmentLambda", {
+      functionName: "Appointment-CreateAppointment",
       runtime: lambda.Runtime.NODEJS_22_X,
-      entry: path.join(__dirname, "../handlers/get-availability.ts"),
+      entry: path.join(__dirname, "../handlers/create-appointment.ts"),
       handler: "handler",
-      logGroup: new logs.LogGroup(this, "GetAvailabilityLogGroup", {
+      logGroup: new logs.LogGroup(this, "CreateAppointmentLogGroup", {
         retention: logs.RetentionDays.THREE_DAYS,
         removalPolicy: cdk.RemovalPolicy.DESTROY,
       }),
@@ -43,7 +41,7 @@ export class AvailabilityPerSlotConstruct
       },
     });
 
-    // Grant Lambda permissions to read from DynamoDB
-    table.grantReadData(this.lambda);
+    // Grant Lambda permissions to read/write from DynamoDB
+    table.grantReadWriteData(this.lambda);
   }
 }
