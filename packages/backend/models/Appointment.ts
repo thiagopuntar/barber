@@ -74,6 +74,19 @@ export default class Appointment {
     return this.#customer;
   }
 
+  toJSON(): any {
+    return {
+      date: this.#date,
+      initialTime: this.#initialTime,
+      finalTime: this.#finalTime,
+      employee: this.#employee,
+      service: this.#service,
+      customer: this.#customer,
+      createdAt: this.#createdAt,
+      updatedAt: this.#updatedAt,
+    };
+  }
+
   conflictsWith(start: string, end: string): boolean {
     return start < this.#finalTime && end > this.#initialTime;
   }

@@ -37,6 +37,7 @@ export default class CreateAvailabilityUseCase {
       );
       throw new Error("Employee not found");
     }
+    Logger.debug("employee", employee);
 
     const service = await this.serviceRepository.getById(businessId, serviceId);
     if (!service) {
@@ -45,6 +46,7 @@ export default class CreateAvailabilityUseCase {
       );
       throw new Error("Service not found");
     }
+    Logger.debug("service", service);
 
     const [startHour, startMinute] = initialTime.split(":").map(Number);
     const totalMinutes = startHour * 60 + startMinute + service.duration;
@@ -55,12 +57,12 @@ export default class CreateAvailabilityUseCase {
     ).padStart(2, "0")}`;
 
     // Create the availability
-    const availability = employee.hasAvailabilityForSlot({
+    const hasAvailability = employee.hasAvailabilityForSlot({
       date,
       initialTime,
       endTime: finalTime,
     });
-    if (!availability) {
+    if (!hasAvailability) {
       Logger.error(
         `No availability found for business ${businessId} and employee ${employeeId} and service ${serviceId} and date ${date}`
       );
@@ -99,7 +101,7 @@ export default class CreateAvailabilityUseCase {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
-
+    Logger.debug("appointment", appointment);
     await this.appointmentRepository.create(businessId, appointment);
 
     return appointment;
