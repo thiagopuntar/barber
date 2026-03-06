@@ -1,3 +1,4 @@
+import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as logs from "aws-cdk-lib/aws-logs";
@@ -23,10 +24,14 @@ export class AvailabilityPerSlotConstruct
     const { table } = props;
 
     this.lambda = new NodejsFunction(this, "GetAvailabilityLambda", {
+      functionName: "Appointment-GetAvailability",
       runtime: lambda.Runtime.NODEJS_22_X,
       entry: path.join(__dirname, "../handlers/get-availability.ts"),
       handler: "handler",
-      logRetention: logs.RetentionDays.THREE_DAYS,
+      logGroup: new logs.LogGroup(this, "GetAvailabilityLogGroup", {
+        retention: logs.RetentionDays.THREE_DAYS,
+        removalPolicy: cdk.RemovalPolicy.DESTROY,
+      }),
       bundling: {
         forceDockerBundling: false,
         minify: true,

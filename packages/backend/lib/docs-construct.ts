@@ -34,7 +34,10 @@ export class DocsConstruct extends Construct {
         s3deploy.Source.data("openapi.json", props.openApiSpec),
       ],
       destinationBucket: docsBucket,
-      logRetention: logs.RetentionDays.THREE_DAYS,
+      logGroup: new logs.LogGroup(this, "DeployDocsLogGroup", {
+        retention: logs.RetentionDays.THREE_DAYS,
+        removalPolicy: cdk.RemovalPolicy.DESTROY,
+      }),
     });
 
     // Output the Docs URL
