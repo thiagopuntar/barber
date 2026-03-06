@@ -3,8 +3,6 @@ import { DynamoDBDocumentClient, PutCommand, QueryCommand } from "@aws-sdk/lib-d
 import IAppointmentRepository from "./IAppointmentRepository";
 import Appointment from "../models/Appointment";
 import { Logger } from "../utils/Logger";
-import Employee, { Availability } from "../models/Employee";
-import Service from "../models/Service";
 
 class AppointmentRepository implements IAppointmentRepository {
   private dynamoClient: DynamoDBDocumentClient;
@@ -53,7 +51,6 @@ class AppointmentRepository implements IAppointmentRepository {
 
       return result.Items.map(item => {
         return new Appointment({
-          id: item.id as string,
           date: new Date(item.date as string),
           initialTime: item.initialTime as string,
           finalTime: item.finalTime as string,
@@ -84,7 +81,6 @@ class AppointmentRepository implements IAppointmentRepository {
       const payload = {
         pk: this.#getPk(businessId),
         sk: this.#getSk(appointment.employee.id, appointment.date),
-        appointmentId: appointment.id,
         date: appointment.date.toISOString(),
         initialTime: appointment.initialTime,
         finalTime: appointment.finalTime,
@@ -107,7 +103,10 @@ class AppointmentRepository implements IAppointmentRepository {
 
       return createdAppointment.Attributes as Appointment;
     } catch (error) {
-      Logger.error(`Error creating appointment in DynamoDB: ${appointment.id}`, error);
+      Logger.error(
+        `Error creating appointment in DynamoDB: ${this.#getSk(appointment.employee.id, appointment.date)}`,
+        error
+      );
       throw error;
     }
   }

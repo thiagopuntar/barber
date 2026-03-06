@@ -50,7 +50,7 @@ export class GetAvailabilityUseCase {
         employee.id,
         currentDate
       );
-      const slots = this.getSlotPerDay({
+      const slots = this.#getSlotPerDay({
         date: currentDate,
         duration,
         employee,
@@ -63,7 +63,7 @@ export class GetAvailabilityUseCase {
     return freeSlots;
   }
 
-  getSlotPerDay(input: {
+  #getSlotPerDay(input: {
     date: Date;
     duration: number;
     employee: Employee;

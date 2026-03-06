@@ -48,6 +48,25 @@ class Employee {
     return this.#availability.find(availability => availability.weekDay === weekDay);
   }
 
+  hasAvailabilityForSlot({
+    date,
+    initialTime,
+    endTime,
+  }: {
+    date: Date;
+    initialTime: string;
+    endTime: string;
+  }) {
+    const availability = this.getAvailabilityForWeekDay(date.getDay());
+    if (!availability) {
+      return false;
+    }
+
+    return availability.range.some(range => {
+      return range.start <= initialTime && range.end >= endTime;
+    });
+  }
+
   toJSON(): any {
     return {
       id: this.#id,

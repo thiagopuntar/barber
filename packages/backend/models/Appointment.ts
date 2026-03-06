@@ -4,7 +4,6 @@ type GenericObject = {
 };
 
 export default class Appointment {
-  #id: string;
   #date: Date;
   #initialTime: string;
   #finalTime: string;
@@ -15,7 +14,6 @@ export default class Appointment {
   #updatedAt: Date;
 
   constructor({
-    id,
     date,
     initialTime,
     finalTime,
@@ -25,7 +23,6 @@ export default class Appointment {
     createdAt,
     updatedAt,
   }: {
-    id: string;
     date: Date;
     initialTime: string;
     finalTime: string;
@@ -35,7 +32,6 @@ export default class Appointment {
     createdAt: Date;
     updatedAt: Date;
   }) {
-    this.#id = id;
     this.#date = date;
     this.#initialTime = initialTime;
     this.#finalTime = finalTime;
@@ -48,10 +44,6 @@ export default class Appointment {
 
   get date(): Date {
     return this.#date;
-  }
-
-  get id(): string {
-    return this.#id;
   }
 
   get initialTime(): string {
