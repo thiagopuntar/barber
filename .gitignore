@@ -4,9 +4,16 @@
 node_modules
 .agent/
 
+# Environment variables
+.env
+.env.*
+!.env.example
+
 # CDK asset staging directory
 .cdk.staging
 cdk.out
 
 # TypeScript build output
 dist/
+
+.vscode/
