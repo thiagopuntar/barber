@@ -5,7 +5,6 @@ import IAppointmentRepository from "../repositories/IAppointmentRepository";
 import Employee from "../models/Employee";
 import Service from "../models/Service";
 import Appointment from "../models/Appointment";
-import { Logger } from "../utils/Logger";
 
 jest.mock("../utils/Logger");
 
@@ -99,7 +98,10 @@ describe("CreateAvailabilityUseCase", () => {
       employeeId,
       date
     );
-    expect(appointmentRepository.create).toHaveBeenCalledWith(businessId, expect.any(Appointment));
+    expect(appointmentRepository.create).toHaveBeenCalledWith(
+      businessId,
+      expect.any(Appointment)
+    );
   });
 
   it("should throw an error if employee is not found", async () => {
@@ -215,7 +217,9 @@ describe("CreateAvailabilityUseCase", () => {
 
     employeeRepository.getById.mockResolvedValue(employee);
     serviceRepository.getById.mockResolvedValue(service);
-    appointmentRepository.getAllByEmployeeIdAndDate.mockResolvedValue([conflictingAppointment]);
+    appointmentRepository.getAllByEmployeeIdAndDate.mockResolvedValue([
+      conflictingAppointment,
+    ]);
 
     // Act & Assert
     await expect(

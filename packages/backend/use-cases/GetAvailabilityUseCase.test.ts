@@ -175,7 +175,6 @@ describe("GetAvailabilityUseCase", () => {
     });
 
     const appointment = new Appointment({
-      id: "appt-1",
       date: date,
       initialTime: "09:00",
       finalTime: "10:00",

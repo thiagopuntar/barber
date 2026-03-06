@@ -86,7 +86,6 @@ describe("AppointmentRepository", () => {
 
       // Check first appointment mapping
       expect(result[0]).toBeInstanceOf(Appointment);
-      expect(result[0].id).toBe("appointment-1");
       expect(result[0].date).toEqual(new Date("2024-01-15T00:00:00.000Z"));
       expect(result[0].initialTime).toBe("10:00");
       expect(result[0].finalTime).toBe("11:00");
@@ -95,7 +94,6 @@ describe("AppointmentRepository", () => {
 
       // Check second appointment mapping
       expect(result[1]).toBeInstanceOf(Appointment);
-      expect(result[1].id).toBe("appointment-2");
       expect(result[1].date).toEqual(new Date("2024-01-15T00:00:00.000Z"));
       expect(result[1].initialTime).toBe("14:00");
       expect(result[1].finalTime).toBe("15:30");
@@ -230,7 +228,6 @@ describe("AppointmentRepository", () => {
       // Assert
       expect(result).toHaveLength(1);
       const appointment = result[0];
-      expect(appointment.id).toBe("appointment-test");
       expect(appointment.date).toEqual(new Date("2024-01-15T00:00:00.000Z"));
       expect(appointment.initialTime).toBe("09:00");
       expect(appointment.finalTime).toBe("10:00");
@@ -286,11 +283,6 @@ describe("AppointmentRepository", () => {
 
       // Assert
       expect(result).toHaveLength(3);
-      expect(result.map((a: Appointment) => a.id)).toEqual([
-        "appointment-morning",
-        "appointment-late-morning",
-        "appointment-afternoon",
-      ]);
       expect(result.map((a: Appointment) => a.initialTime)).toEqual([
         "09:00",
         "11:00",
