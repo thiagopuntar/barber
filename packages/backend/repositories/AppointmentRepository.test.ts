@@ -47,6 +47,9 @@ describe("AppointmentRepository", () => {
           finalTime: "11:00",
           createdAt: "2024-01-15T08:00:00.000Z",
           updatedAt: "2024-01-15T08:30:00.000Z",
+          employee: { id: "employee-456", name: "Employee Name" },
+          service: { id: "service-789", name: "Service Name" },
+          customer: { id: "customer-123", name: "Customer Name" },
         },
         {
           pk: "business-123#appointment",
@@ -57,6 +60,9 @@ describe("AppointmentRepository", () => {
           finalTime: "15:30",
           createdAt: "2024-01-15T12:00:00.000Z",
           updatedAt: "2024-01-15T12:15:00.000Z",
+          employee: { id: "employee-456", name: "Employee Name" },
+          service: { id: "service-789", name: "Service Name" },
+          customer: { id: "customer-123", name: "Customer Name" },
         },
       ];
 
@@ -212,6 +218,9 @@ describe("AppointmentRepository", () => {
         finalTime: "10:00",
         createdAt: "2024-01-14T20:00:00.000Z",
         updatedAt: "2024-01-14T21:00:00.000Z",
+        employee: { id: "employee-456", name: "Employee Name" },
+        service: { id: "service-789", name: "Service Name" },
+        customer: { id: "customer-123", name: "Customer Name" },
       };
 
       mockSend.mockResolvedValue({
@@ -247,6 +256,9 @@ describe("AppointmentRepository", () => {
           finalTime: "10:00",
           createdAt: "2024-01-14T20:00:00.000Z",
           updatedAt: "2024-01-14T21:00:00.000Z",
+          employee: { id: "employee-456", name: "Employee Name" },
+          service: { id: "service-789", name: "Service Name" },
+          customer: { id: "customer-123", name: "Customer Name" },
         },
         {
           pk: "business-123#appointment",
@@ -257,6 +269,9 @@ describe("AppointmentRepository", () => {
           finalTime: "12:00",
           createdAt: "2024-01-14T20:15:00.000Z",
           updatedAt: "2024-01-14T21:15:00.000Z",
+          employee: { id: "employee-456", name: "Employee Name" },
+          service: { id: "service-789", name: "Service Name" },
+          customer: { id: "customer-123", name: "Customer Name" },
         },
         {
           pk: "business-123#appointment",
@@ -267,6 +282,9 @@ describe("AppointmentRepository", () => {
           finalTime: "15:30",
           createdAt: "2024-01-14T20:30:00.000Z",
           updatedAt: "2024-01-14T21:30:00.000Z",
+          employee: { id: "employee-456", name: "Employee Name" },
+          service: { id: "service-789", name: "Service Name" },
+          customer: { id: "customer-123", name: "Customer Name" },
         },
       ];
 
