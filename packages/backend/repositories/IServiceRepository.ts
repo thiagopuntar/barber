@@ -2,7 +2,7 @@ import Service from "../models/Service";
 
 interface IServiceRepository {
   getAllByBusinessId(businessId: string): Promise<Service[]>;
-  getById(businessId: string, serviceId: string): Promise<Service>;
+  getById(businessId: string, serviceId: string): Promise<Service | null>;
 }
 
 export default IServiceRepository;

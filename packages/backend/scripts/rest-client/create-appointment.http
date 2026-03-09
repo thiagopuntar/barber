@@ -1,6 +1,6 @@
 ### Create Appointment
 # @name createAppointment
-POST {{baseUrl}}{{businessId}}/appointments
+POST {{baseUrl}}/{{businessId}}/appointments
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 

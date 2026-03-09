@@ -78,7 +78,9 @@ async function generateToken() {
       );
     }
 
-    const secondsLeft = payload.exp ? payload.exp - Math.floor(Date.now() / 1000) : undefined;
+    const secondsLeft = payload.exp
+      ? payload.exp - Math.floor(Date.now() / 1000)
+      : undefined;
     if (secondsLeft !== undefined && secondsLeft <= 0) {
       throw new Error("Generated token is already expired");
     }

@@ -51,7 +51,7 @@ export class EmployeeRepository implements IEmployeeRepository {
     }
   }
 
-  async getById(businessId: string, employeeId: string): Promise<Employee> {
+  async getById(businessId: string, employeeId: string): Promise<Employee | null> {
     try {
       const pk = this.#getPk(businessId);
       const sk = employeeId;
@@ -70,7 +70,7 @@ export class EmployeeRepository implements IEmployeeRepository {
         Logger.info(
           `Employee not found for business ${businessId} and employee ${employeeId}`
         );
-        throw new Error("Employee not found");
+        return null;
       }
 
       Logger.debug(

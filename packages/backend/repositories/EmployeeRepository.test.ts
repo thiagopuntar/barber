@@ -224,23 +224,23 @@ describe("EmployeeRepository", () => {
       });
 
       expect(result).toBeInstanceOf(Employee);
-      expect(result.id).toBe(employeeId);
-      expect(result.name).toBe("John Doe");
-      expect(result.getAvailabilityForWeekDay(1)).toEqual(mockDynamoItem.availability[0]);
-      expect(result.createdAt).toEqual(new Date(mockDynamoItem.createdAt));
-      expect(result.updatedAt).toEqual(new Date(mockDynamoItem.updatedAt));
+      expect(result?.id).toBe(employeeId);
+      expect(result?.name).toBe("John Doe");
+      expect(result?.getAvailabilityForWeekDay(1)).toEqual(
+        mockDynamoItem.availability[0]
+      );
+      expect(result?.createdAt).toEqual(new Date(mockDynamoItem.createdAt));
+      expect(result?.updatedAt).toEqual(new Date(mockDynamoItem.updatedAt));
     });
 
-    it("should throw an error when employee is not found", async () => {
+    it("should return null when employee is not found", async () => {
       // Arrange
       mockSend.mockResolvedValue({ Item: undefined });
 
       // Act & Assert
-      await expect(repository.getById(businessId, employeeId)).rejects.toThrow(
-        "Employee not found"
-      );
-
+      const result = await repository.getById(businessId, employeeId);
       expect(mockSend).toHaveBeenCalledTimes(1);
+      expect(result).toBeNull();
     });
 
     it("should handle DynamoDB errors properly", async () => {

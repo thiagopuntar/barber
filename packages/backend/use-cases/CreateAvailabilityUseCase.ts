@@ -1,3 +1,4 @@
+import KnownError from "../errors/KnownError";
 import Appointment from "../models/Appointment";
 import IAppointmentRepository from "../repositories/IAppointmentRepository";
 import { IEmployeeRepository } from "../repositories/IEmployeeRepository";
@@ -35,7 +36,7 @@ export default class CreateAvailabilityUseCase {
       Logger.error(
         `Employee not found for business ${businessId} and employee ${employeeId}`
       );
-      throw new Error("Employee not found");
+      throw new KnownError("Employee not found");
     }
     Logger.debug("employee", employee);
 
@@ -44,7 +45,7 @@ export default class CreateAvailabilityUseCase {
       Logger.error(
         `Service not found for business ${businessId} and service ${serviceId}`
       );
-      throw new Error("Service not found");
+      throw new KnownError("Service not found");
     }
     Logger.debug("service", service);
 
@@ -66,7 +67,7 @@ export default class CreateAvailabilityUseCase {
       Logger.error(
         `No availability found for business ${businessId} and employee ${employeeId} and service ${serviceId} and date ${date}`
       );
-      throw new Error("No availability found");
+      throw new KnownError("No availability found");
     }
 
     const appointments = await this.appointmentRepository.getAllByEmployeeIdAndDate(
@@ -82,7 +83,7 @@ export default class CreateAvailabilityUseCase {
       Logger.error(
         `Conflicts found for business ${businessId} and employee ${employeeId} and service ${serviceId} and date ${date} and initialTime ${initialTime} and finalTime ${finalTime}`
       );
-      throw new Error("Conflicts found");
+      throw new KnownError("Conflicts found");
     }
 
     const appointment = new Appointment({

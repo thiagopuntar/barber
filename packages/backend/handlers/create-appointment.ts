@@ -4,6 +4,7 @@ import { EmployeeRepository } from "../repositories/EmployeeRepository";
 import ServiceRepository from "../repositories/ServiceRepository";
 import AppointmentRepository from "../repositories/AppointmentRepository";
 import CreateAvailabilityUseCase from "../use-cases/CreateAvailabilityUseCase";
+import KnownError from "../errors/KnownError";
 
 const headers = {
   "Content-Type": "application/json",
@@ -38,12 +39,10 @@ export const handler = async (
       };
     }
 
-    // Dummy logic for now
-    const appointmentId = "appt-123";
-
     // Access Cognito user information
     const userEmail = event.requestContext.authorizer?.claims?.email;
     const userId = event.requestContext.authorizer?.claims?.sub;
+    Logger.info(`User email: ${userEmail}, User ID: ${userId}`);
 
     const tableName = process.env.APPOINTMENT_TABLE_NAME;
     if (!tableName) {
@@ -85,6 +84,14 @@ export const handler = async (
     };
   } catch (error) {
     Logger.error("Error creating appointment:", error);
+
+    if (error instanceof KnownError) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ errorMessage: error.message }),
+      };
+    }
 
     return {
       statusCode: 500,

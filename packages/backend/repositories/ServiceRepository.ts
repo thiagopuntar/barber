@@ -17,7 +17,7 @@ class ServiceRepository implements IServiceRepository {
     return `${businessId}#service`;
   }
 
-  async getById(businessId: string, serviceId: string): Promise<Service> {
+  async getById(businessId: string, serviceId: string): Promise<Service | null> {
     try {
       const pk = this.#getPk(businessId);
       const sk = serviceId;
@@ -30,8 +30,14 @@ class ServiceRepository implements IServiceRepository {
       const result = await this.dynamoClient.send(command);
 
       if (!result.Item) {
-        throw new Error("Service not found");
+        Logger.debug(
+          `Service not found for business ${businessId} and service ${serviceId}`
+        );
+        return null;
       }
+
+      Logger.debug(`Service found for business ${businessId} and service ${serviceId}`);
+      Logger.debug(`Item: ${JSON.stringify(result.Item)}`);
 
       return new Service({
         id: result.Item.sk as string,
