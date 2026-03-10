@@ -1,6 +1,6 @@
 import Employee from "../models/Employee";
 
 export interface IEmployeeRepository {
-  getEmployeesByBusinessId(businessId: string): Promise<Employee[]>;
-  getEmployee(businessId: string, employeeId: string): Promise<Employee>;
+  getAllByBusinessId(businessId: string): Promise<Employee[]>;
+  getById(businessId: string, employeeId: string): Promise<Employee | null>;
 }

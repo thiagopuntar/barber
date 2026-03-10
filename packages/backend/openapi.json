@@ -19,6 +19,10 @@
       "description": "Availability search endpoints"
     },
     {
+      "name": "Appointments",
+      "description": "Appointment management endpoints"
+    },
+    {
       "name": "Business",
       "description": "Business detail endpoints"
     }
@@ -192,6 +196,76 @@
           "type": "aws_proxy",
           "httpMethod": "POST",
           "uri": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetEmployeesLambdaArn}/invocations",
+          "passthroughBehavior": "when_no_match"
+        }
+      }
+    },
+    "/{businessId}/appointments": {
+      "post": {
+        "tags": ["Appointments"],
+        "operationId": "createAppointment",
+        "parameters": [
+          {
+            "name": "businessId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAppointmentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Appointment created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateAppointmentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "CognitoAuthorizer": []
+          }
+        ],
+        "x-amazon-apigateway-request-validator": "all",
+        "x-amazon-apigateway-integration": {
+          "type": "aws_proxy",
+          "httpMethod": "POST",
+          "uri": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateAppointmentLambdaArn}/invocations",
           "passthroughBehavior": "when_no_match"
         }
       }
@@ -630,8 +704,136 @@
             }
           }
         }
+      },
+      "GenericObject": {
+        "required": ["id", "name"],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "AppointmentService": {
+        "required": ["id", "name", "duration", "price", "description"],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "duration": {
+            "type": "number"
+          },
+          "price": {
+            "type": "number"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "Appointment": {
+        "title": "Appointment",
+        "required": [
+          "date",
+          "initialTime",
+          "finalTime",
+          "employee",
+          "service",
+          "customer",
+          "createdAt",
+          "updatedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "initialTime": {
+            "type": "string",
+            "pattern": "^([01]?[0-9]|2[0-3]):[0-5][0-9]$"
+          },
+          "finalTime": {
+            "type": "string",
+            "pattern": "^([01]?[0-9]|2[0-3]):[0-5][0-9]$"
+          },
+          "employee": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "service": {
+            "$ref": "#/components/schemas/AppointmentService"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CreateAppointmentRequest": {
+        "title": "CreateAppointmentRequest",
+        "required": ["serviceId", "employeeId", "date", "initialTime"],
+        "type": "object",
+        "properties": {
+          "serviceId": {
+            "type": "string"
+          },
+          "employeeId": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "initialTime": {
+            "type": "string",
+            "pattern": "^([01]?[0-9]|2[0-3]):[0-5][0-9]$"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateAppointmentResponse": {
+        "title": "CreateAppointmentResponse",
+        "required": ["appointment"],
+        "type": "object",
+        "properties": {
+          "appointment": {
+            "$ref": "#/components/schemas/Appointment"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "CognitoAuthorizer": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header",
+        "x-amazon-apigateway-authtype": "cognito_user_pools",
+        "x-amazon-apigateway-authorizer": {
+          "type": "cognito_user_pools",
+          "providerARNs": ["${UserPoolArn}"]
+        }
+      }
+    },
+    "x-amazon-apigateway-security-policy": "TLS_1_0",
+    "x-amazon-apigateway-request-validators": {
+      "all": {
+        "validateRequestBody": true,
+        "validateRequestParameters": true
       }
     }
-  },
-  "x-amazon-apigateway-security-policy": "TLS_1_0"
+  }
 }

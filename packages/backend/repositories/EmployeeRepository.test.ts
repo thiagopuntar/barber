@@ -30,7 +30,7 @@ describe("EmployeeRepository", () => {
     repository = new EmployeeRepository(tableName);
   });
 
-  describe("getEmployeesByBusinessId", () => {
+  describe("getAllByBusinessId", () => {
     const businessId = "business-123";
 
     it("should successfully retrieve and map employees", async () => {
@@ -61,7 +61,7 @@ describe("EmployeeRepository", () => {
       mockSend.mockResolvedValue(mockQueryResult);
 
       // Act
-      const result = await repository.getEmployeesByBusinessId(businessId);
+      const result = await repository.getAllByBusinessId(businessId);
 
       // Assert
       expect(mockSend).toHaveBeenCalledTimes(1);
@@ -71,17 +71,19 @@ describe("EmployeeRepository", () => {
       const queryCommand = mockedQueryCommand.mock.instances[0];
       expect(queryCommand).toBeDefined();
 
-      const expectedEmployee1 = new Employee();
-      expectedEmployee1.id = "emp-1";
-      expectedEmployee1.name = "John Doe";
-      expectedEmployee1.createdAt = new Date("2023-01-01T00:00:00Z");
-      expectedEmployee1.updatedAt = new Date("2023-01-02T00:00:00Z");
+      const expectedEmployee1 = new Employee({
+        id: "emp-1",
+        name: "John Doe",
+        createdAt: new Date("2023-01-01T00:00:00Z"),
+        updatedAt: new Date("2023-01-02T00:00:00Z"),
+      });
 
-      const expectedEmployee2 = new Employee();
-      expectedEmployee2.id = "emp-2";
-      expectedEmployee2.name = "Jane Smith";
-      expectedEmployee2.createdAt = new Date("2023-01-03T00:00:00Z");
-      expectedEmployee2.updatedAt = new Date("2023-01-04T00:00:00Z");
+      const expectedEmployee2 = new Employee({
+        id: "emp-2",
+        name: "Jane Smith",
+        createdAt: new Date("2023-01-03T00:00:00Z"),
+        updatedAt: new Date("2023-01-04T00:00:00Z"),
+      });
 
       const expectedEmployees: Employee[] = [expectedEmployee1, expectedEmployee2];
 
@@ -97,7 +99,7 @@ describe("EmployeeRepository", () => {
       mockSend.mockResolvedValue(mockQueryResult);
 
       // Act
-      const result = await repository.getEmployeesByBusinessId(businessId);
+      const result = await repository.getAllByBusinessId(businessId);
 
       // Assert
       expect(mockSend).toHaveBeenCalledTimes(1);
@@ -113,7 +115,7 @@ describe("EmployeeRepository", () => {
       mockSend.mockResolvedValue(mockQueryResult);
 
       // Act
-      const result = await repository.getEmployeesByBusinessId(businessId);
+      const result = await repository.getAllByBusinessId(businessId);
 
       // Assert
       expect(mockSend).toHaveBeenCalledTimes(1);
@@ -129,7 +131,7 @@ describe("EmployeeRepository", () => {
       mockSend.mockResolvedValue(mockQueryResult);
 
       // Act
-      await repository.getEmployeesByBusinessId(businessId);
+      await repository.getAllByBusinessId(businessId);
 
       // Assert
       expect(mockedQueryCommand).toHaveBeenCalledWith({
@@ -147,7 +149,7 @@ describe("EmployeeRepository", () => {
       mockSend.mockRejectedValue(mockError);
 
       // Act & Assert
-      await expect(repository.getEmployeesByBusinessId(businessId)).rejects.toThrow(
+      await expect(repository.getAllByBusinessId(businessId)).rejects.toThrow(
         "DynamoDB connection failed"
       );
 
@@ -172,7 +174,7 @@ describe("EmployeeRepository", () => {
       mockSend.mockResolvedValue(mockQueryResult);
 
       // Act
-      const result = await repository.getEmployeesByBusinessId(businessId);
+      const result = await repository.getAllByBusinessId(businessId);
 
       // Assert
       expect(result).toHaveLength(1);
@@ -184,7 +186,7 @@ describe("EmployeeRepository", () => {
     });
   });
 
-  describe("getEmployee", () => {
+  describe("getById", () => {
     const businessId = "business-123";
     const employeeId = "emp-123";
 
@@ -207,7 +209,7 @@ describe("EmployeeRepository", () => {
       mockSend.mockResolvedValue({ Item: mockDynamoItem });
 
       // Act
-      const result = await repository.getEmployee(businessId, employeeId);
+      const result = await repository.getById(businessId, employeeId);
 
       // Assert
       expect(mockSend).toHaveBeenCalledTimes(1);
@@ -222,23 +224,23 @@ describe("EmployeeRepository", () => {
       });
 
       expect(result).toBeInstanceOf(Employee);
-      expect(result.id).toBe(employeeId);
-      expect(result.name).toBe("John Doe");
-      expect(result.availability).toEqual(mockDynamoItem.availability);
-      expect(result.createdAt).toEqual(new Date(mockDynamoItem.createdAt));
-      expect(result.updatedAt).toEqual(new Date(mockDynamoItem.updatedAt));
+      expect(result?.id).toBe(employeeId);
+      expect(result?.name).toBe("John Doe");
+      expect(result?.getAvailabilityForWeekDay(1)).toEqual(
+        mockDynamoItem.availability[0]
+      );
+      expect(result?.createdAt).toEqual(new Date(mockDynamoItem.createdAt));
+      expect(result?.updatedAt).toEqual(new Date(mockDynamoItem.updatedAt));
     });
 
-    it("should throw an error when employee is not found", async () => {
+    it("should return null when employee is not found", async () => {
       // Arrange
       mockSend.mockResolvedValue({ Item: undefined });
 
       // Act & Assert
-      await expect(repository.getEmployee(businessId, employeeId)).rejects.toThrow(
-        "Employee not found"
-      );
-
+      const result = await repository.getById(businessId, employeeId);
       expect(mockSend).toHaveBeenCalledTimes(1);
+      expect(result).toBeNull();
     });
 
     it("should handle DynamoDB errors properly", async () => {
@@ -247,7 +249,7 @@ describe("EmployeeRepository", () => {
       mockSend.mockRejectedValue(mockError);
 
       // Act & Assert
-      await expect(repository.getEmployee(businessId, employeeId)).rejects.toThrow(
+      await expect(repository.getById(businessId, employeeId)).rejects.toThrow(
         "DynamoDB error"
       );
 

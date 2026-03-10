@@ -3,8 +3,11 @@ import { EmployeeRepository } from "../repositories/EmployeeRepository";
 import AppointmentRepository from "../repositories/AppointmentRepository";
 import ServiceRepository from "../repositories/ServiceRepository";
 import { GetAvailabilityUseCase } from "../use-cases/GetAvailabilityUseCase";
+import { Logger } from "../utils/Logger";
 
-export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+export const handler = async (
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> => {
   try {
     // Extract businessId from path parameters
     const businessId = event.pathParameters?.businessId;
@@ -21,7 +24,8 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
           "Access-Control-Allow-Methods": "GET, OPTIONS",
         },
         body: JSON.stringify({
-          error: "Business ID is required and employee ID is required and service ID is required",
+          error:
+            "Business ID is required and employee ID is required and service ID is required",
         }),
       };
     }
@@ -72,7 +76,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       }),
     };
   } catch (error) {
-    console.error("Error getting services:", error);
+    Logger.error("Error getting services:", error);
 
     return {
       statusCode: 500,

@@ -2,6 +2,7 @@ import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as s3 from "aws-cdk-lib/aws-s3";
 import * as s3deploy from "aws-cdk-lib/aws-s3-deployment";
+import * as logs from "aws-cdk-lib/aws-logs";
 import * as path from "path";
 
 interface DocsConstructProps {
@@ -33,6 +34,10 @@ export class DocsConstruct extends Construct {
         s3deploy.Source.data("openapi.json", props.openApiSpec),
       ],
       destinationBucket: docsBucket,
+      logGroup: new logs.LogGroup(this, "DeployDocsLogGroup", {
+        retention: logs.RetentionDays.THREE_DAYS,
+        removalPolicy: cdk.RemovalPolicy.DESTROY,
+      }),
     });
 
     // Output the Docs URL
