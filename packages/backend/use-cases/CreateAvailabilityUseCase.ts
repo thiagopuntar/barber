@@ -97,6 +97,9 @@ export default class CreateAvailabilityUseCase {
       service: {
         id: serviceId,
         name: service.name,
+        duration: service.duration,
+        price: service.price,
+        description: service.description,
       },
       customer: customerData,
       createdAt: new Date(),

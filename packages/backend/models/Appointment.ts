@@ -3,12 +3,20 @@ type GenericObject = {
   name: string;
 };
 
+type AppointmentService = {
+  id: string;
+  name: string;
+  duration: number;
+  price: number;
+  description: string;
+};
+
 export default class Appointment {
   #date: Date;
   #initialTime: string;
   #finalTime: string;
   #employee: GenericObject;
-  #service: GenericObject;
+  #service: AppointmentService;
   #customer: GenericObject;
   #createdAt: Date;
   #updatedAt: Date;
@@ -27,7 +35,13 @@ export default class Appointment {
     initialTime: string;
     finalTime: string;
     employee: GenericObject;
-    service: GenericObject;
+    service: {
+      id: string;
+      name: string;
+      duration: number;
+      price: number;
+      description: string;
+    };
     customer: GenericObject;
     createdAt: Date;
     updatedAt: Date;
@@ -66,7 +80,7 @@ export default class Appointment {
     return this.#employee;
   }
 
-  get service(): GenericObject {
+  get service(): AppointmentService {
     return this.#service;
   }
 

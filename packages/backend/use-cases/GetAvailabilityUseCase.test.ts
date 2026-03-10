@@ -187,6 +187,9 @@ describe("GetAvailabilityUseCase", () => {
       service: {
         id: serviceId,
         name: "Test Service",
+        duration: 60,
+        price: 100,
+        description: "Test Description",
       },
       customer: {
         id: "cust-123",

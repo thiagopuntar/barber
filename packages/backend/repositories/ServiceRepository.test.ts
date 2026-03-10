@@ -189,6 +189,9 @@ describe("ServiceRepository", () => {
       // Assert
       expect(mockSend).toHaveBeenCalledTimes(1);
       expect(mockSend).toHaveBeenCalledWith(expect.any(GetCommand));
+      if (!result) {
+        throw new Error("Expected service to be returned");
+      }
 
       expect(result).toBeInstanceOf(Service);
       expect(result.id).toBe(serviceId);
@@ -200,14 +203,12 @@ describe("ServiceRepository", () => {
       expect(result.updatedAt).toEqual(new Date(mockDynamoItem.updatedAt));
     });
 
-    it("should throw an error when service is not found", async () => {
+    it("should return null when service is not found", async () => {
       // Arrange
       mockSend.mockResolvedValue({ Item: undefined });
 
       // Act & Assert
-      await expect(repository.getById(businessId, serviceId)).rejects.toThrow(
-        "Service not found"
-      );
+      await expect(repository.getById(businessId, serviceId)).resolves.toBeNull();
     });
   });
 });

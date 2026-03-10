@@ -717,6 +717,27 @@
           }
         }
       },
+      "AppointmentService": {
+        "required": ["id", "name", "duration", "price", "description"],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "duration": {
+            "type": "number"
+          },
+          "price": {
+            "type": "number"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
       "Appointment": {
         "title": "Appointment",
         "required": [
@@ -747,7 +768,7 @@
             "$ref": "#/components/schemas/GenericObject"
           },
           "service": {
-            "$ref": "#/components/schemas/GenericObject"
+            "$ref": "#/components/schemas/AppointmentService"
           },
           "customer": {
             "$ref": "#/components/schemas/GenericObject"

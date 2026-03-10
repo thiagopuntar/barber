@@ -3,6 +3,7 @@ import IServiceRepository from "../repositories/IServiceRepository";
 import IAppointmentRepository from "../repositories/IAppointmentRepository";
 import Appointment from "../models/Appointment";
 import Employee from "../models/Employee";
+import KnownError from "../errors/KnownError";
 import { Logger } from "../utils/Logger";
 
 export class GetAvailabilityUseCase {
@@ -21,7 +22,20 @@ export class GetAvailabilityUseCase {
   }): Promise<SlotPerDay[]> {
     const { businessId, serviceId, employeeId, initialDate, finalDate } = input;
     const employee = await this.employeeRepository.getById(businessId, employeeId);
+    if (!employee) {
+      Logger.error(
+        `Employee not found for business ${businessId} and employee ${employeeId}`
+      );
+      throw new KnownError("Employee not found");
+    }
+
     const service = await this.serviceRepository.getById(businessId, serviceId);
+    if (!service) {
+      Logger.error(
+        `Service not found for business ${businessId} and service ${serviceId}`
+      );
+      throw new KnownError("Service not found");
+    }
 
     return this.getAvailability({
       businessId,

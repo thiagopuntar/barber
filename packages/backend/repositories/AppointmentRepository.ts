@@ -36,7 +36,7 @@ class AppointmentRepository implements IAppointmentRepository {
 
       const command = new QueryCommand({
         TableName: this.tableName,
-        KeyConditionExpression: "pk = :pk and sk = begins_with(:sk)",
+        KeyConditionExpression: "pk = :pk and begins_with(sk, :sk)",
         ExpressionAttributeValues: {
           ":pk": pk,
           ":sk": sk,
@@ -63,6 +63,9 @@ class AppointmentRepository implements IAppointmentRepository {
           service: {
             id: item.service.id as string,
             name: item.service.name as string,
+            duration: item.service.duration as number,
+            price: item.service.price as number,
+            description: item.service.description as string,
           },
           customer: {
             id: item.customer.id as string,

@@ -81,7 +81,7 @@ describe("AppointmentRepository", () => {
       expect(mockSend).toHaveBeenCalledTimes(1);
       expect(mockedQueryCommand).toHaveBeenCalledWith({
         TableName: tableName,
-        KeyConditionExpression: "pk = :pk and sk = begins_with(:sk)",
+        KeyConditionExpression: "pk = :pk and begins_with(sk, :sk)",
         ExpressionAttributeValues: {
           ":pk": `${businessId}#appointment`,
           ":sk": `${employeeId}#${date.toISOString().split("T")[0]}`,
@@ -219,7 +219,13 @@ describe("AppointmentRepository", () => {
         createdAt: "2024-01-14T20:00:00.000Z",
         updatedAt: "2024-01-14T21:00:00.000Z",
         employee: { id: "employee-456", name: "Employee Name" },
-        service: { id: "service-789", name: "Service Name" },
+        service: {
+          id: "service-789",
+          name: "Service Name",
+          duration: 60,
+          price: 100,
+          description: "Service Description",
+        },
         customer: { id: "customer-123", name: "Customer Name" },
       };
 
@@ -242,6 +248,11 @@ describe("AppointmentRepository", () => {
       expect(appointment.finalTime).toBe("10:00");
       expect(appointment.createdAt).toEqual(new Date("2024-01-14T20:00:00.000Z"));
       expect(appointment.updatedAt).toEqual(new Date("2024-01-14T21:00:00.000Z"));
+      expect(appointment.service.id).toBe("service-789");
+      expect(appointment.service.name).toBe("Service Name");
+      expect(appointment.service.duration).toBe(60);
+      expect(appointment.service.price).toBe(100);
+      expect(appointment.service.description).toBe("Service Description");
     });
 
     it("should handle multiple appointments for the same employee and date", async () => {

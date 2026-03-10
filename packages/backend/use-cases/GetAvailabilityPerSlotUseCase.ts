@@ -2,6 +2,7 @@ import { IEmployeeRepository } from "../repositories/IEmployeeRepository";
 import IServiceRepository from "../repositories/IServiceRepository";
 import Employee from "../models/Employee";
 import { GetAvailabilityUseCase } from "./GetAvailabilityUseCase";
+import KnownError from "../errors/KnownError";
 
 export class GetAvailabilityPerSlotUseCase {
   constructor(
@@ -19,6 +20,9 @@ export class GetAvailabilityPerSlotUseCase {
     const { businessId, serviceId, initialDate, finalDate } = input;
     const employees = await this.employeeRepository.getAllByBusinessId(businessId);
     const service = await this.serviceRepository.getById(businessId, serviceId);
+    if (!service) {
+      throw new KnownError("Service not found");
+    }
 
     const result: SlotPerDayAndEmployee[] = [];
     const dateToSlotsMap: Map<
