@@ -11,7 +11,6 @@ const mockedDynamoDBDocumentClient = DynamoDBDocumentClient as jest.Mocked<
   typeof DynamoDBDocumentClient
 >;
 const mockedQueryCommand = QueryCommand as jest.MockedClass<typeof QueryCommand>;
-const mockedGetCommand = GetCommand as jest.MockedClass<typeof GetCommand>;
 
 describe("ServiceRepository", () => {
   let repository: ServiceRepository;
