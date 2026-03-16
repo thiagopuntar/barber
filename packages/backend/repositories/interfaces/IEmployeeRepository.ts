@@ -1,4 +1,4 @@
-import Employee from "../models/Employee";
+import Employee from "../../models/Employee";
 
 export interface IEmployeeRepository {
   getAllByBusinessId(businessId: string): Promise<Employee[]>;

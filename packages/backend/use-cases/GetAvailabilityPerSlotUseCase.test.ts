@@ -1,7 +1,7 @@
 import { GetAvailabilityPerSlotUseCase } from "./GetAvailabilityPerSlotUseCase";
 import { GetAvailabilityUseCase } from "./GetAvailabilityUseCase";
-import { IEmployeeRepository } from "../repositories/IEmployeeRepository";
-import IServiceRepository from "../repositories/IServiceRepository";
+import { IEmployeeRepository } from "../repositories/interfaces/IEmployeeRepository";
+import IServiceRepository from "../repositories/interfaces/IServiceRepository";
 import Employee from "../models/Employee";
 import Service from "../models/Service";
 

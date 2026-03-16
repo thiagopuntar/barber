@@ -1,4 +1,4 @@
-import IServiceRepository from "./IServiceRepository";
+import IServiceRepository from "./interfaces/IServiceRepository";
 import Service from "../models/Service";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";

@@ -1,7 +1,7 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import Employee, { Availability } from "../models/Employee";
 import { DynamoDBDocumentClient, GetCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
-import { IEmployeeRepository } from "./IEmployeeRepository";
+import { IEmployeeRepository } from "./interfaces/IEmployeeRepository";
 import { Logger } from "../utils/Logger";
 
 export class EmployeeRepository implements IEmployeeRepository {

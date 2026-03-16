@@ -1,7 +1,7 @@
 import { GetAvailabilityUseCase } from "./GetAvailabilityUseCase";
-import { IEmployeeRepository } from "../repositories/IEmployeeRepository";
-import IServiceRepository from "../repositories/IServiceRepository";
-import IAppointmentRepository from "../repositories/IAppointmentRepository";
+import { IEmployeeRepository } from "../repositories/interfaces/IEmployeeRepository";
+import IServiceRepository from "../repositories/interfaces/IServiceRepository";
+import IAppointmentRepository from "../repositories/interfaces/IAppointmentRepository";
 import Employee from "../models/Employee";
 import Service from "../models/Service";
 import Appointment from "../models/Appointment";

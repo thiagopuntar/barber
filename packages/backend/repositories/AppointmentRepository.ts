@@ -1,6 +1,6 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
-import IAppointmentRepository from "./IAppointmentRepository";
+import IAppointmentRepository from "./interfaces/IAppointmentRepository";
 import Appointment from "../models/Appointment";
 import { Logger } from "../utils/Logger";
 
