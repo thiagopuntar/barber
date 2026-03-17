@@ -1,7 +1,7 @@
 import { GetAvailabilityPerSlotUseCase } from "./GetAvailabilityPerSlotUseCase";
 import { GetAvailabilityUseCase } from "./GetAvailabilityUseCase";
-import { IEmployeeRepository } from "../repositories/IEmployeeRepository";
-import IServiceRepository from "../repositories/IServiceRepository";
+import { IEmployeeRepository } from "../repositories/interfaces/IEmployeeRepository";
+import IServiceRepository from "../repositories/interfaces/IServiceRepository";
 import Employee from "../models/Employee";
 import Service from "../models/Service";
 
@@ -13,12 +13,12 @@ describe("GetAvailabilityPerSlotUseCase", () => {
 
   beforeEach(() => {
     employeeRepository = {
-      getEmployeesByBusinessId: jest.fn(),
-      getEmployee: jest.fn(),
+      getAllByBusinessId: jest.fn(),
+      getById: jest.fn(),
     } as any;
     serviceRepository = {
-      getServiceById: jest.fn(),
-      getServicesByBusinessId: jest.fn(),
+      getById: jest.fn(),
+      getAllByBusinessId: jest.fn(),
     } as any;
     getAvailabilityUseCase = {
       getAvailability: jest.fn(),
@@ -39,20 +39,32 @@ describe("GetAvailabilityPerSlotUseCase", () => {
     const initialDate = new Date(2024, 2, 4); // Monday (March 4, 2024)
     const finalDate = new Date(2024, 2, 4);
 
-    const emp1 = new Employee();
-    emp1.id = "emp-1";
-    emp1.name = "Employee 1";
+    const emp1 = new Employee({
+      id: "emp-1",
+      name: "Employee 1",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
 
-    const emp2 = new Employee();
-    emp2.id = "emp-2";
-    emp2.name = "Employee 2";
+    const emp2 = new Employee({
+      id: "emp-2",
+      name: "Employee 2",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
 
-    const service = new Service();
-    service.id = serviceId;
-    service.duration = 60;
+    const service = new Service({
+      id: serviceId,
+      name: "Test Service",
+      description: "Test Description",
+      price: 100,
+      duration: 60,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
 
-    employeeRepository.getEmployeesByBusinessId.mockResolvedValue([emp1, emp2]);
-    serviceRepository.getServiceById.mockResolvedValue(service);
+    employeeRepository.getAllByBusinessId.mockResolvedValue([emp1, emp2]);
+    serviceRepository.getById.mockResolvedValue(service);
 
     // Mock emp1 availability: 09:00-10:00, 10:00-11:00
     getAvailabilityUseCase.getAvailability.mockResolvedValueOnce([
@@ -117,8 +129,18 @@ describe("GetAvailabilityPerSlotUseCase", () => {
     const serviceId = "srv-789";
     const date = new Date(2024, 2, 4);
 
-    employeeRepository.getEmployeesByBusinessId.mockResolvedValue([]);
-    serviceRepository.getServiceById.mockResolvedValue(new Service());
+    employeeRepository.getAllByBusinessId.mockResolvedValue([]);
+    serviceRepository.getById.mockResolvedValue(
+      new Service({
+        id: "srv-1",
+        name: "Test Service",
+        description: "Test Description",
+        price: 100,
+        duration: 60,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+    );
 
     // Act
     const result = await useCase.execute({
@@ -139,14 +161,25 @@ describe("GetAvailabilityPerSlotUseCase", () => {
     const initialDate = new Date(2024, 2, 4); // Monday
     const finalDate = new Date(2024, 2, 5); // Tuesday
 
-    const emp1 = new Employee();
-    emp1.id = "emp-1";
+    const emp1 = new Employee({
+      id: "emp-1",
+      name: "Employee 1",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
 
-    const service = new Service();
-    service.duration = 60;
+    const service = new Service({
+      id: "srv-1",
+      name: "Test Service",
+      description: "Test Description",
+      price: 100,
+      duration: 60,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
 
-    employeeRepository.getEmployeesByBusinessId.mockResolvedValue([emp1]);
-    serviceRepository.getServiceById.mockResolvedValue(service);
+    employeeRepository.getAllByBusinessId.mockResolvedValue([emp1]);
+    serviceRepository.getById.mockResolvedValue(service);
 
     getAvailabilityUseCase.getAvailability.mockResolvedValueOnce([
       {

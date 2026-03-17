@@ -10,6 +10,7 @@ import { EmployeesConstruct } from "./employees-construct";
 import { AvailabilityConstruct } from "./availability-construct";
 import { BusinessConstruct } from "./business-construct";
 import { AuthConstruct } from "./auth-construct";
+import { AppointmentsConstruct } from "./appointments-construct";
 import { AvailabilityPerSlotConstruct } from "./availability-per-slot-construct";
 import { IAPIRestLambdaConstruct } from "./api-rest-lambda-construct";
 import { DocsConstruct } from "./docs-construct";
@@ -33,8 +34,20 @@ export class AppointmentStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY, // For development only
     });
 
+    appointmentTable.addGlobalSecondaryIndex({
+      indexName: "pk-customerId-index",
+      partitionKey: {
+        name: "pk",
+        type: dynamodb.AttributeType.STRING,
+      },
+      sortKey: {
+        name: "customerId",
+        type: dynamodb.AttributeType.STRING,
+      },
+    });
+
     // Auth Construct
-    new AuthConstruct(this, "AuthConstruct");
+    const authConstruct = new AuthConstruct(this, "AuthConstruct");
 
     const servicesConstruct = new ServicesConstruct(this, "ServicesConstruct", {
       table: appointmentTable,
@@ -44,9 +57,13 @@ export class AppointmentStack extends cdk.Stack {
       table: appointmentTable,
     });
 
-    const availabilityConstruct = new AvailabilityConstruct(this, "AvailabilityConstruct", {
-      table: appointmentTable,
-    });
+    const availabilityConstruct = new AvailabilityConstruct(
+      this,
+      "AvailabilityConstruct",
+      {
+        table: appointmentTable,
+      }
+    );
 
     const businessConstruct = new BusinessConstruct(this, "BusinessConstruct", {
       table: appointmentTable,
@@ -60,16 +77,38 @@ export class AppointmentStack extends cdk.Stack {
       }
     );
 
+    const appointmentsConstruct = new AppointmentsConstruct(
+      this,
+      "AppointmentsConstruct",
+      {
+        table: appointmentTable,
+      }
+    );
+
     const apiRestLambdaConstructs: IAPIRestLambdaConstruct[] = [
       servicesConstruct,
       employeesConstruct,
       availabilityConstruct,
       businessConstruct,
       availabilityPerSlotConstruct,
+      appointmentsConstruct,
     ];
 
-    const openApiTemplate = fs.readFileSync(path.join(__dirname, "../openapi.json"), "utf8");
-    let openApiWithSubstitutions = openApiTemplate.split("${AWS::Region}").join(cdk.Aws.REGION);
+    const logLevel = this.node.tryGetContext("logLevel") || "INFO";
+    for (const apiRestLambdaConstruct of apiRestLambdaConstructs) {
+      apiRestLambdaConstruct.lambda.addEnvironment("LOG_LEVEL", logLevel);
+    }
+
+    const openApiTemplate = fs.readFileSync(
+      path.join(__dirname, "../openapi.json"),
+      "utf8"
+    );
+    let openApiWithSubstitutions = openApiTemplate
+      .split("${AWS::Region}")
+      .join(cdk.Aws.REGION);
+    openApiWithSubstitutions = openApiWithSubstitutions
+      .split("${UserPoolArn}")
+      .join(authConstruct.userPool.userPoolArn);
     for (const apiRestLambdaConstruct of apiRestLambdaConstructs) {
       openApiWithSubstitutions = openApiWithSubstitutions
         .split(`\${${apiRestLambdaConstruct.lambdaName}}`)
@@ -80,7 +119,9 @@ export class AppointmentStack extends cdk.Stack {
     const api = new apigateway.SpecRestApi(this, "AppointmentApi", {
       restApiName: "Appointment API",
       description: "API for Appointment services",
-      apiDefinition: apigateway.ApiDefinition.fromInline(JSON.parse(openApiWithSubstitutions)),
+      apiDefinition: apigateway.ApiDefinition.fromInline(
+        JSON.parse(openApiWithSubstitutions)
+      ),
       deployOptions: {
         stageName: "prod",
       },

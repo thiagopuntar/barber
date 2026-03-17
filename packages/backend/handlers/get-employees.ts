@@ -1,7 +1,10 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { EmployeeRepository } from "../repositories/EmployeeRepository";
+import { Logger } from "../utils/Logger";
 
-export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+export const handler = async (
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> => {
   try {
     // Extract businessId from path parameters
     const businessId = event.pathParameters?.businessId;
@@ -29,7 +32,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
     // Initialize repository and fetch services
     const employeeRepository = new EmployeeRepository(tableName);
-    const employees = await employeeRepository.getEmployeesByBusinessId(businessId);
+    const employees = await employeeRepository.getAllByBusinessId(businessId);
 
     return {
       statusCode: 200,
@@ -45,7 +48,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       }),
     };
   } catch (error) {
-    console.error("Error getting services:", error);
+    Logger.error("Error getting services:", error);
 
     return {
       statusCode: 500,

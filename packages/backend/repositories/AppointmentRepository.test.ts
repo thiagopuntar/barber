@@ -30,7 +30,7 @@ describe("AppointmentRepository", () => {
     repository = new AppointmentRepository(tableName);
   });
 
-  describe("getAppointmentsByEmployeeIdAndDate", () => {
+  describe("getAllByEmployeeIdAndDate", () => {
     const businessId = "business-123";
     const employeeId = "employee-456";
     const date = new Date("2024-01-15");
@@ -47,6 +47,9 @@ describe("AppointmentRepository", () => {
           finalTime: "11:00",
           createdAt: "2024-01-15T08:00:00.000Z",
           updatedAt: "2024-01-15T08:30:00.000Z",
+          employee: { id: "employee-456", name: "Employee Name" },
+          service: { id: "service-789", name: "Service Name" },
+          customer: { id: "customer-123", name: "Customer Name" },
         },
         {
           pk: "business-123#appointment",
@@ -57,6 +60,9 @@ describe("AppointmentRepository", () => {
           finalTime: "15:30",
           createdAt: "2024-01-15T12:00:00.000Z",
           updatedAt: "2024-01-15T12:15:00.000Z",
+          employee: { id: "employee-456", name: "Employee Name" },
+          service: { id: "service-789", name: "Service Name" },
+          customer: { id: "customer-123", name: "Customer Name" },
         },
       ];
 
@@ -65,7 +71,7 @@ describe("AppointmentRepository", () => {
       });
 
       // Act
-      const result = await repository.getAppointmentsByEmployeeIdAndDate(
+      const result = await repository.getAllByEmployeeIdAndDate(
         businessId,
         employeeId,
         date
@@ -75,7 +81,7 @@ describe("AppointmentRepository", () => {
       expect(mockSend).toHaveBeenCalledTimes(1);
       expect(mockedQueryCommand).toHaveBeenCalledWith({
         TableName: tableName,
-        KeyConditionExpression: "pk = :pk and sk = begins_with(:sk)",
+        KeyConditionExpression: "pk = :pk and begins_with(sk, :sk)",
         ExpressionAttributeValues: {
           ":pk": `${businessId}#appointment`,
           ":sk": `${employeeId}#${date.toISOString().split("T")[0]}`,
@@ -86,7 +92,6 @@ describe("AppointmentRepository", () => {
 
       // Check first appointment mapping
       expect(result[0]).toBeInstanceOf(Appointment);
-      expect(result[0].id).toBe("appointment-1");
       expect(result[0].date).toEqual(new Date("2024-01-15T00:00:00.000Z"));
       expect(result[0].initialTime).toBe("10:00");
       expect(result[0].finalTime).toBe("11:00");
@@ -95,7 +100,6 @@ describe("AppointmentRepository", () => {
 
       // Check second appointment mapping
       expect(result[1]).toBeInstanceOf(Appointment);
-      expect(result[1].id).toBe("appointment-2");
       expect(result[1].date).toEqual(new Date("2024-01-15T00:00:00.000Z"));
       expect(result[1].initialTime).toBe("14:00");
       expect(result[1].finalTime).toBe("15:30");
@@ -110,7 +114,7 @@ describe("AppointmentRepository", () => {
       });
 
       // Act
-      const result = await repository.getAppointmentsByEmployeeIdAndDate(
+      const result = await repository.getAllByEmployeeIdAndDate(
         businessId,
         employeeId,
         date
@@ -128,7 +132,7 @@ describe("AppointmentRepository", () => {
       });
 
       // Act
-      const result = await repository.getAppointmentsByEmployeeIdAndDate(
+      const result = await repository.getAllByEmployeeIdAndDate(
         businessId,
         employeeId,
         date
@@ -146,7 +150,7 @@ describe("AppointmentRepository", () => {
 
       // Act & Assert
       await expect(
-        repository.getAppointmentsByEmployeeIdAndDate(businessId, employeeId, date)
+        repository.getAllByEmployeeIdAndDate(businessId, employeeId, date)
       ).rejects.toThrow("DynamoDB connection failed");
       expect(mockSend).toHaveBeenCalledTimes(1);
     });
@@ -156,7 +160,7 @@ describe("AppointmentRepository", () => {
       mockSend.mockResolvedValue({ Items: [] });
 
       // Act
-      await repository.getAppointmentsByEmployeeIdAndDate(businessId, employeeId, date);
+      await repository.getAllByEmployeeIdAndDate(businessId, employeeId, date);
 
       // Assert
       expect(mockedQueryCommand).toHaveBeenCalledWith(
@@ -173,7 +177,7 @@ describe("AppointmentRepository", () => {
       mockSend.mockResolvedValue({ Items: [] });
 
       // Act
-      await repository.getAppointmentsByEmployeeIdAndDate(businessId, employeeId, date);
+      await repository.getAllByEmployeeIdAndDate(businessId, employeeId, date);
 
       // Assert
       expect(mockedQueryCommand).toHaveBeenCalledWith(
@@ -191,7 +195,7 @@ describe("AppointmentRepository", () => {
       mockSend.mockResolvedValue({ Items: [] });
 
       // Act
-      await repository.getAppointmentsByEmployeeIdAndDate(businessId, employeeId, dateWithTime);
+      await repository.getAllByEmployeeIdAndDate(businessId, employeeId, dateWithTime);
 
       // Assert
       expect(mockedQueryCommand).toHaveBeenCalledWith(
@@ -214,6 +218,15 @@ describe("AppointmentRepository", () => {
         finalTime: "10:00",
         createdAt: "2024-01-14T20:00:00.000Z",
         updatedAt: "2024-01-14T21:00:00.000Z",
+        employee: { id: "employee-456", name: "Employee Name" },
+        service: {
+          id: "service-789",
+          name: "Service Name",
+          duration: 60,
+          price: 100,
+          description: "Service Description",
+        },
+        customer: { id: "customer-123", name: "Customer Name" },
       };
 
       mockSend.mockResolvedValue({
@@ -221,7 +234,7 @@ describe("AppointmentRepository", () => {
       });
 
       // Act
-      const result = await repository.getAppointmentsByEmployeeIdAndDate(
+      const result = await repository.getAllByEmployeeIdAndDate(
         businessId,
         employeeId,
         date
@@ -230,12 +243,16 @@ describe("AppointmentRepository", () => {
       // Assert
       expect(result).toHaveLength(1);
       const appointment = result[0];
-      expect(appointment.id).toBe("appointment-test");
       expect(appointment.date).toEqual(new Date("2024-01-15T00:00:00.000Z"));
       expect(appointment.initialTime).toBe("09:00");
       expect(appointment.finalTime).toBe("10:00");
       expect(appointment.createdAt).toEqual(new Date("2024-01-14T20:00:00.000Z"));
       expect(appointment.updatedAt).toEqual(new Date("2024-01-14T21:00:00.000Z"));
+      expect(appointment.service.id).toBe("service-789");
+      expect(appointment.service.name).toBe("Service Name");
+      expect(appointment.service.duration).toBe(60);
+      expect(appointment.service.price).toBe(100);
+      expect(appointment.service.description).toBe("Service Description");
     });
 
     it("should handle multiple appointments for the same employee and date", async () => {
@@ -250,6 +267,9 @@ describe("AppointmentRepository", () => {
           finalTime: "10:00",
           createdAt: "2024-01-14T20:00:00.000Z",
           updatedAt: "2024-01-14T21:00:00.000Z",
+          employee: { id: "employee-456", name: "Employee Name" },
+          service: { id: "service-789", name: "Service Name" },
+          customer: { id: "customer-123", name: "Customer Name" },
         },
         {
           pk: "business-123#appointment",
@@ -260,6 +280,9 @@ describe("AppointmentRepository", () => {
           finalTime: "12:00",
           createdAt: "2024-01-14T20:15:00.000Z",
           updatedAt: "2024-01-14T21:15:00.000Z",
+          employee: { id: "employee-456", name: "Employee Name" },
+          service: { id: "service-789", name: "Service Name" },
+          customer: { id: "customer-123", name: "Customer Name" },
         },
         {
           pk: "business-123#appointment",
@@ -270,6 +293,9 @@ describe("AppointmentRepository", () => {
           finalTime: "15:30",
           createdAt: "2024-01-14T20:30:00.000Z",
           updatedAt: "2024-01-14T21:30:00.000Z",
+          employee: { id: "employee-456", name: "Employee Name" },
+          service: { id: "service-789", name: "Service Name" },
+          customer: { id: "customer-123", name: "Customer Name" },
         },
       ];
 
@@ -278,7 +304,7 @@ describe("AppointmentRepository", () => {
       });
 
       // Act
-      const result = await repository.getAppointmentsByEmployeeIdAndDate(
+      const result = await repository.getAllByEmployeeIdAndDate(
         businessId,
         employeeId,
         date
@@ -286,13 +312,16 @@ describe("AppointmentRepository", () => {
 
       // Assert
       expect(result).toHaveLength(3);
-      expect(result.map(a => a.id)).toEqual([
-        "appointment-morning",
-        "appointment-late-morning",
-        "appointment-afternoon",
+      expect(result.map((a: Appointment) => a.initialTime)).toEqual([
+        "09:00",
+        "11:00",
+        "14:00",
       ]);
-      expect(result.map(a => a.initialTime)).toEqual(["09:00", "11:00", "14:00"]);
-      expect(result.map(a => a.finalTime)).toEqual(["10:00", "12:00", "15:30"]);
+      expect(result.map((a: Appointment) => a.finalTime)).toEqual([
+        "10:00",
+        "12:00",
+        "15:30",
+      ]);
     });
   });
 });

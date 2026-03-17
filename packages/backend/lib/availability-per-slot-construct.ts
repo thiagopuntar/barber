@@ -1,5 +1,7 @@
+import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as logs from "aws-cdk-lib/aws-logs";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as path from "path";
@@ -9,7 +11,10 @@ interface AvailabilityPerSlotConstructProps {
   table: dynamodb.Table;
 }
 
-export class AvailabilityPerSlotConstruct extends Construct implements IAPIRestLambdaConstruct {
+export class AvailabilityPerSlotConstruct
+  extends Construct
+  implements IAPIRestLambdaConstruct
+{
   public readonly lambda: NodejsFunction;
   public readonly lambdaName: string = "GetAvailabilityLambdaArn";
 
@@ -19,9 +24,14 @@ export class AvailabilityPerSlotConstruct extends Construct implements IAPIRestL
     const { table } = props;
 
     this.lambda = new NodejsFunction(this, "GetAvailabilityLambda", {
+      functionName: "Appointment-GetAvailability",
       runtime: lambda.Runtime.NODEJS_22_X,
       entry: path.join(__dirname, "../handlers/get-availability.ts"),
       handler: "handler",
+      logGroup: new logs.LogGroup(this, "GetAvailabilityLogGroup", {
+        retention: logs.RetentionDays.THREE_DAYS,
+        removalPolicy: cdk.RemovalPolicy.DESTROY,
+      }),
       bundling: {
         forceDockerBundling: false,
         minify: true,

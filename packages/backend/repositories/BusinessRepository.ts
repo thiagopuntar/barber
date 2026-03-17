@@ -1,7 +1,8 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
 import Business from "../models/Business";
-import { IBusinessRepository } from "./IBusinessRepository";
+import { IBusinessRepository } from "./interfaces/IBusinessRepository";
+import { Logger } from "../utils/Logger";
 
 export class BusinessRepository implements IBusinessRepository {
   private dynamoClient: DynamoDBDocumentClient;
@@ -50,7 +51,7 @@ export class BusinessRepository implements IBusinessRepository {
 
       return business;
     } catch (error) {
-      console.error("Error fetching business from DynamoDB:", error);
+      Logger.error("Error fetching business from DynamoDB:", error);
       throw error;
     }
   }

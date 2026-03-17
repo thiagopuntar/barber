@@ -1,5 +1,7 @@
+import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as logs from "aws-cdk-lib/aws-logs";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as path from "path";
@@ -19,9 +21,14 @@ export class AvailabilityConstruct extends Construct implements IAPIRestLambdaCo
     const { table } = props;
 
     this.lambda = new NodejsFunction(this, "GetAvailabilityEmployeeLambda", {
+      functionName: "Appointment-GetAvailabilityEmployee",
       runtime: lambda.Runtime.NODEJS_22_X,
       entry: path.join(__dirname, "../handlers/get-availability-employee.ts"),
       handler: "handler",
+      logGroup: new logs.LogGroup(this, "GetAvailabilityEmployeeLogGroup", {
+        retention: logs.RetentionDays.THREE_DAYS,
+        removalPolicy: cdk.RemovalPolicy.DESTROY,
+      }),
       bundling: {
         forceDockerBundling: false,
         minify: true,
