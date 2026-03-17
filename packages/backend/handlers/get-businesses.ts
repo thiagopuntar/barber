@@ -1,4 +1,4 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
+import { APIGatewayProxyResult } from "aws-lambda";
 import { BusinessRepository } from "../repositories/BusinessRepository";
 import { Logger } from "../utils/Logger";
 
@@ -9,49 +9,25 @@ const headers = {
   "Access-Control-Allow-Methods": "GET, OPTIONS",
 };
 
-export const handler = async (
-  event: APIGatewayProxyEvent
-): Promise<APIGatewayProxyResult> => {
+export const handler = async (): Promise<APIGatewayProxyResult> => {
   try {
-    const businessId = event.pathParameters?.businessId;
-
-    if (!businessId) {
-      return {
-        statusCode: 400,
-        headers,
-        body: JSON.stringify({
-          error: "Business ID is required",
-        }),
-      };
-    }
-
     const tableName = process.env.APPOINTMENT_TABLE_NAME;
     if (!tableName) {
       throw new Error("APPOINTMENT_TABLE_NAME environment variable is not set");
     }
 
     const businessRepository = new BusinessRepository(tableName);
-    const business = await businessRepository.getById(businessId);
-
-    if (!business) {
-      return {
-        statusCode: 404,
-        headers,
-        body: JSON.stringify({
-          error: "Business not found",
-        }),
-      };
-    }
+    const businesses = await businessRepository.getAll();
 
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify({
-        business,
+        businesses,
       }),
     };
   } catch (error) {
-    Logger.error("Error getting business:", error);
+    Logger.error("Error getting businesses:", error);
 
     return {
       statusCode: 500,
