@@ -28,7 +28,7 @@
     }
   ],
   "paths": {
-    "/{businessId}": {
+    "business/{businessId}": {
       "get": {
         "tags": ["Business"],
         "operationId": "getBusiness",

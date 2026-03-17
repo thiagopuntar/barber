@@ -31,7 +31,7 @@ export const handler = async (
     }
 
     const businessRepository = new BusinessRepository(tableName);
-    const business = await businessRepository.getBusinessById(businessId);
+    const business = await businessRepository.getById(businessId);
 
     if (!business) {
       return {

@@ -16,7 +16,7 @@ export class BusinessRepository implements IBusinessRepository {
     return "business";
   }
 
-  async getBusinessById(businessId: string): Promise<Business | null> {
+  async getById(businessId: string): Promise<Business | null> {
     try {
       const command = new GetCommand({
         TableName: this.tableName,
@@ -54,5 +54,9 @@ export class BusinessRepository implements IBusinessRepository {
       Logger.error("Error fetching business from DynamoDB:", error);
       throw error;
     }
+  }
+
+  async getAll(): Promise<Business[]> {
+    throw new Error("Not implemented");
   }
 }
