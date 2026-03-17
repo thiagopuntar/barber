@@ -14,6 +14,7 @@ import { AppointmentsConstruct } from "./appointments-construct";
 import { AvailabilityPerSlotConstruct } from "./availability-per-slot-construct";
 import { IAPIRestLambdaConstruct } from "./api-rest-lambda-construct";
 import { DocsConstruct } from "./docs-construct";
+import { GetBusinessesConstruct } from "./get-businesses-construct";
 
 export class AppointmentStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -69,6 +70,14 @@ export class AppointmentStack extends cdk.Stack {
       table: appointmentTable,
     });
 
+    const getBusinessesConstruct = new GetBusinessesConstruct(
+      this,
+      "GetBusinessesConstruct",
+      {
+        table: appointmentTable,
+      }
+    );
+
     const availabilityPerSlotConstruct = new AvailabilityPerSlotConstruct(
       this,
       "AvailabilityPerSlotConstruct",
@@ -90,6 +99,7 @@ export class AppointmentStack extends cdk.Stack {
       employeesConstruct,
       availabilityConstruct,
       businessConstruct,
+      getBusinessesConstruct,
       availabilityPerSlotConstruct,
       appointmentsConstruct,
     ];

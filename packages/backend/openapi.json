@@ -28,7 +28,41 @@
     }
   ],
   "paths": {
-    "business/{businessId}": {
+    "/businesses": {
+      "get": {
+        "tags": ["Business"],
+        "operationId": "getBusinesses",
+        "responses": {
+          "200": {
+            "description": "Businesses fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BusinessesResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "type": "aws_proxy",
+          "httpMethod": "POST",
+          "uri": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetBusinessesLambdaArn}/invocations",
+          "passthroughBehavior": "when_no_match"
+        }
+      }
+    },
+    "/businesses/{businessId}": {
       "get": {
         "tags": ["Business"],
         "operationId": "getBusiness",
@@ -700,6 +734,76 @@
               },
               "zip": {
                 "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "BusinessesResponse": {
+        "title": "BusinessesResponse",
+        "required": ["businesses"],
+        "type": "object",
+        "properties": {
+          "businesses": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "address",
+                "city",
+                "createdAt",
+                "description",
+                "id",
+                "image",
+                "name",
+                "updatedAt",
+                "url"
+              ],
+              "properties": {
+                "address": {
+                  "type": "string"
+                },
+                "city": {
+                  "type": "string"
+                },
+                "country": {
+                  "type": "string"
+                },
+                "createdAt": {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "image": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "phone": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "string"
+                },
+                "updatedAt": {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                },
+                "zip": {
+                  "type": "string"
+                }
               }
             }
           }
